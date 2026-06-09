@@ -109,5 +109,8 @@
   },
   "primaryTokenAttribute": "attributes.hp",
   "secondaryTokenAttribute": null,
+  "url": "https://github.com/colearkenach/fires-of-war",
+  "manifest": "https://github.com/colearkenach/fires-of-war/releases/download/v1/system.json",
+  "download": "https://github.com/colearkenach/fires-of-war/archive/refs/tags/v1.zip",
   "license": "LICENSE.txt"
 }
