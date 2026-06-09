@@ -1,0 +1,328 @@
+{
+  "Actor": {
+    "types": [ "character", "party", "shop" ],
+    "templates": {
+      "base": {
+        "attributes": {
+          "hp": {
+            "value": 0,
+            "max": 0
+          },
+          "strength": {
+            "value": 0,
+            "max": 0
+          },
+          "magic": {
+            "value": 0,
+            "max": 0
+          },
+          "skill": {
+            "value": 0,
+            "max": 0
+          },
+          "speed": {
+            "value": 0,
+            "max": 0
+          },
+          "defense": {
+            "value": 0,
+            "max": 0
+          },
+          "resistance": {
+            "value": 0,
+            "max": 0
+          },
+          "luck": {
+            "value": 0,
+            "max": 0
+          },
+          "charm": {
+            "value": 0,
+            "max": 0
+          },
+          "build": {
+            "value": 0,
+            "max": 0
+          }
+        },
+        "growthRates": {
+          "hp": 0,
+          "strength": 0,
+          "magic": 0,
+          "skill": 0,
+          "speed": 0,
+          "defense": 0,
+          "resistance": 0,
+          "luck": 0,
+          "charm": 0,
+          "build": 0
+        },
+        "accumulatedGrowthRates": {
+          "hp": 0,
+          "strength": 0,
+          "magic": 0,
+          "skill": 0,
+          "speed": 0,
+          "defense": 0,
+          "resistance": 0,
+          "luck": 0,
+          "charm": 0,
+          "build": 0
+        },
+        "level": 1,
+        "totalLevel": 1,
+        "experience": 0
+      }
+    },
+    "character": {
+      "templates": [ "base" ],
+      "biography": "",
+      "appearance": "",
+      "combat": {
+        "hitRate": 0,
+        "critRate": 0,
+        "avoid": 0,
+        "dodge": 0,
+        "damage": 0
+      },
+      "weaponRanks": {
+        "sword": "",
+        "lance": "",
+        "axe": "",
+        "bow": "",
+        "firearm": "",
+        "unarmed": "",
+        "knife": "",
+        "anima": "",
+        "light": "",
+        "dark": "",
+        "staff": "",
+        "monster": "",
+        "stone": ""
+      },
+      "battalionRank": "",
+      "weaponMasteryBonuses": {},
+      "movement": {
+        "base": 0,
+        "current": 0
+      },
+      "unitTypes": [],
+      "supportRanks": {},
+      "affinity": "",
+      "weaponExp": 0,
+      "fatePoints": {
+        "value": 0,
+        "max": 0
+      },
+      "statusEffects": [],
+      "holyBlood": [],
+      "crests": [],
+      "alternateClasses": [],
+      "fatigue": {
+        "value": 0,
+        "max": 0
+      },
+      "personalDetails": {
+        "age": 0,
+        "sex": "",
+        "height": "",
+        "weight": "",
+        "hairColor": "#000000",
+        "eyeColor": "#000000",
+        "birthplace": "",
+        "background": ""
+      }
+    },
+    "party": {
+      "templates": [],
+      "gold": 0,
+      "memberIds": [],
+      "notes": ""
+    },
+    "shop": {
+      "templates": [],
+      "isOpen": false,
+      "buyMultiplier": 1,
+      "sellMultiplier": 0.5,
+      "partyId": "",
+      "notes": ""
+    }
+  },
+  "Item": {
+    "types": [ "weapon", "item", "skill", "spell", "class", "battalion", "combatArt", "miscBonus" ],
+    "templates": {
+      "base": {
+        "description": "",
+        "source": "",
+        "bonuses": {
+          "attributes": {
+            "hp": 0,
+            "strength": 0,
+            "magic": 0,
+            "skill": 0,
+            "speed": 0,
+            "defense": 0,
+            "resistance": 0,
+            "luck": 0,
+            "charm": 0,
+            "build": 0,
+            "move": 0
+          },
+          "maximums": {
+            "hp": 0,
+            "strength": 0,
+            "magic": 0,
+            "skill": 0,
+            "speed": 0,
+            "defense": 0,
+            "resistance": 0,
+            "luck": 0,
+            "charm": 0,
+            "build": 0,
+            "move": 0
+          },
+          "growthRates": {
+            "hp": 0,
+            "strength": 0,
+            "magic": 0,
+            "skill": 0,
+            "speed": 0,
+            "defense": 0,
+            "resistance": 0,
+            "luck": 0,
+            "charm": 0,
+            "build": 0
+          },
+          "combat": {
+            "hitRate": 0,
+            "critRate": 0,
+            "avoid": 0,
+            "dodge": 0,
+            "attackSpeed": 0
+          }
+        }
+      },
+      "physical": {
+        "price": 0,
+        "weight": 0,
+        "quantity": 1
+      }
+    },
+    "item": {
+      "templates": [ "base", "physical" ],
+      "itemType": "consumable",
+      "equipped": false,
+      "uses": {
+        "value": 3,
+        "max": 3
+      },
+      "effect": ""
+    },
+    "weapon": {
+      "templates": [ "base", "physical" ],
+      "equipped": false,
+      "weaponType": "sword",
+      "might": 5,
+      "hit": 90,
+      "crit": 0,
+      "range": "1",
+      "rank": "E",
+      "prfProficient": false,
+      "uses": {
+        "value": 45,
+        "max": 45
+      },
+      "properties": {
+        "illegal": false,
+        "legendary": false,
+        "slayer": { "enabled": false, "all": false, "types": {} },
+        "cursed": false,
+        "shade": false,
+        "deadly": false,
+        "magical": false,
+        "unwieldy": false,
+        "slow": false,
+        "mechanical": false,
+        "abuse": false,
+        "absorb": false,
+        "puncture": false,
+        "piercing": false
+      },
+      "propertiesNotes": "",
+      "weaponTriangle": {
+        "advantage": "—",
+        "disadvantage": "—"
+      }
+    },
+    "spell": {
+      "templates": [ "base" ],
+      "school": "Black Magic",
+      "hpCost": 1,
+      "might": 3,
+      "hit": 80,
+      "crit": 0,
+      "range": "1-2",
+      "rank": "E",
+      "special": ""
+    },
+    "combatArt": {
+      "templates": [ "base" ],
+      "prerequisites": "",
+      "weaponRestriction": "—",
+      "durabilityCost": 1,
+      "might": 0,
+      "hit": 0,
+      "crit": 0,
+      "avoid": 0,
+      "dodge": 0,
+      "effect": ""
+    },
+    "skill": {
+      "templates": [ "base" ],
+      "skillType": "Passive",
+      "prerequisites": "",
+      "level": "Innate",
+      "activation": "",
+      "grantedByClass": "",
+      "activationTrigger": "Manual",
+      "activationTargetType": "stat_mult",
+      "activationStat": "skill",
+      "activationMult": 1,
+      "activationFixed": 0
+    },
+    "class": {
+      "templates": [ "base" ],
+      "classType": "Standard",
+      "maxLevel": 20,
+      "movement": 5,
+      "equipped": false,
+      "unitTypes": {},
+      "weaponProficiencies": {},
+      "battalionProficiency": false,
+      "baseStats": {},
+      "growthRates": {},
+      "statCaps": {},
+      "classSkills": [],
+      "promotions": [],
+      "currentPath": []
+    },
+    "battalion": {
+      "templates": [ "base" ],
+      "endurance": {
+        "value": 0,
+        "max": 0
+      },
+      "movePenalty": 0,
+      "might": 8,
+      "hit": 10,
+      "crit": 0,
+      "range": "1",
+      "rank": "E",
+      "properties": ""
+    },
+    "miscBonus": {
+      "templates": [ "base" ],
+      "enabled": true
+    }
+  }
+}

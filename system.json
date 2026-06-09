@@ -1,0 +1,113 @@
+{
+  "id": "fires-of-war",
+  "name": "fires-of-war",
+  "title": "Fires of War",
+  "description": "A system for playing Fires of War in Foundry VTT",
+  "version": "13.0.0",
+  "authors": [
+    {
+      "name": "Jeremy H.",
+      "discord": "ColeArkenach"
+    }
+  ],
+  "compatibility": {
+    "minimum": 12,
+    "verified": "13",
+    "maximum": "13"
+  },
+  "esmodules": [
+    "fires-of-war.js"
+  ],
+  "documentTypes": {
+    "Actor": [
+      "character",
+      "party",
+      "shop"
+    ],
+    "Item": [
+      "weapon",
+      "item",
+      "skill",
+      "spell",
+      "class",
+      "battalion",
+      "combatArt",
+      "miscBonus"
+    ]
+  },
+  "styles": [
+    "styles/fires-of-war.css"
+  ],
+  "packs": [
+    {
+      "name": "battalion",
+      "label": "Battalion",
+      "path": "packs/battalion",
+      "type": "Item",
+      "system": "fires-of-war"
+    },
+    {
+      "name": "classes",
+      "label": "Classes",
+      "path": "packs/classes",
+      "type": "Item",
+      "system": "fires-of-war"
+    },
+    {
+      "name": "combat-arts",
+      "label": "Combat Arts",
+      "path": "packs/combat-arts",
+      "type": "Item",
+      "system": "fires-of-war"
+    },
+    {
+      "name": "consumables",
+      "label": "Consumables",
+      "path": "packs/consumables",
+      "type": "Item",
+      "system": "fires-of-war"
+    },
+    {
+      "name": "equippable-items",
+      "label": "Equippable Items",
+      "path": "packs/equippable-items",
+      "type": "Item",
+      "system": "fires-of-war"
+    },
+    {
+      "name": "skills",
+      "label": "Skills",
+      "path": "packs/skills",
+      "type": "Item",
+      "system": "fires-of-war"
+    },
+    {
+      "name": "spell",
+      "label": "Spell",
+      "path": "packs/spell",
+      "type": "Item",
+      "system": "fires-of-war"
+    },
+    {
+      "name": "weapons",
+      "label": "Weapons",
+      "path": "packs/weapons",
+      "type": "Item",
+      "system": "fires-of-war"
+    }
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "grid": {
+    "distance": 1,
+    "units": "square"
+  },
+  "primaryTokenAttribute": "attributes.hp",
+  "secondaryTokenAttribute": null,
+  "license": "LICENSE.txt"
+}

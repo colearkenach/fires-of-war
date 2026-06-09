@@ -1,0 +1,1766 @@
+/* ========================================
+   Fires of War
+   ======================================== */
+
+/* ===== FONTS ===== */
+@font-face {
+    font-family: "NocturneSerif-Regular";
+    src: url("../fonts/NocturneSerif-Regular.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "ChiaroStd-Bold";
+    src: url("../fonts/chiarostd_b.otf") format("opentype");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "gba-text";
+    src: url("../fonts/gba-text.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* ===== CUSTOM PROPERTIES ===== */
+:root {
+    --feue-primary: #2c2a4a;
+    --feue-secondary: #d4af37;
+    --feue-accent: #7a1f2b;
+    --feue-bg: #f8f1e1;
+    --feue-text: #222222;
+    --feue-border: #c2a96a;
+    --feue-header-bg: #1b1a33;
+    --feue-tab-active: #3f3c77;
+    --feue-card-bg: #fdf8ef;
+    --feue-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+
+    --feue-font-body: "NocturneSerif-Regular", "Times New Roman", serif;
+    --feue-font-header: "ChiaroStd-Bold", "Georgia", serif;
+    --feue-font-gba: "gba-text", monospace;
+}
+
+/* ===== BASE ===== */
+.feue {
+    font-family: var(--feue-font-body);
+    background: var(--feue-bg);
+    color: var(--feue-text);
+}
+
+.feue h1,
+.feue h2,
+.feue h3,
+.feue h4,
+.feue .section-header h3,
+.feue .charname input {
+    font-family: var(--feue-font-header);
+    letter-spacing: 0.5px;
+}
+
+.feue h3 {
+    font-size: 14px;
+    color: var(--feue-primary);
+    font-weight: bold;
+    margin: 0 0 10px 0;
+}
+
+.feue h4 {
+    font-size: 13px;
+}
+
+.window-app.feue .window-content,
+.app.feue .window-content {
+    background: var(--feue-bg);
+    padding: 0;
+}
+
+.window-app.feue .window-content > form,
+.app.feue .window-content > form {
+    background: transparent;
+    padding: 0;
+}
+
+/* ===== SHEET HEADER ===== */
+.feue .sheet-header {
+    background: linear-gradient(135deg, var(--feue-header-bg) 0%, var(--feue-primary) 100%);
+    color: white;
+    padding: 12px 16px;
+    border-bottom: 3px solid var(--feue-accent);
+    min-height: 100px;
+    max-height: 175px;
+    overflow: hidden;
+    font-family: var(--feue-font-header);
+}
+
+.feue .sheet-header.flexrow {
+    align-items: center;
+    gap: 16px;
+}
+
+.feue .profile-img {
+    border: 3px solid var(--feue-secondary);
+    border-radius: 6px;
+    object-fit: cover;
+    width: 150px;
+    height: 150px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.feue .header-fields {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.feue .charname {
+    margin: 0 0 4px 0;
+}
+
+.feue .charname input {
+    background: transparent;
+    border: 3px solid var(--feue-secondary);
+    color: white;
+    font-size: 22px;
+    /*font-weight: bold;*/
+    /*text-transform: uppercase;*/
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+    padding: 2px 10px;
+    margin: 0;
+}
+
+.feue .header-row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.feue .resource {
+    margin: 5px 5px;
+    align-items: center;
+    min-width: fit-content;
+}
+
+.feue .resource-label {
+    /*font-weight: bold;*/
+    /*min-width: 55px;*/
+    color: var(--feue-secondary);
+    font-size: 30px;
+    font-family: var(--feue-font-gba);
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.feue .resource-value {
+    color: rgba(255, 255, 255, 0.9);
+    font-family: var(--feue-font-gba);
+    font-size: 30px;
+    letter-spacing: 2px;
+    min-width:fit-content;
+}
+
+.feue .resource-value input,
+.feue .resource-value select {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    width: 50px;
+    font-size: 25px;
+    font-family: var(--feue-font-gba);
+    text-align: center;
+}
+
+.feue .resource-value input:disabled {
+    opacity: 1;
+}
+
+/* HP display */
+.feue .hp-fields {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.feue .hp-fields .hp-current {
+    width: 50px;
+    font-size: 25px;
+    font-family: var(--feue-font-gba);
+    color: #90ee90;
+    text-align: center;
+}
+
+.feue .hp-fields span {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.feue .hp-fields .hp-max {
+    font-family: var(--feue-font-gba);
+    font-size: 25px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Level Up button */
+.feue .level-up {
+    background: linear-gradient(180deg, #9b2335, var(--feue-accent));
+    color: white;
+    border: 1px solid #5a1520;
+    border-radius: 4px;
+    padding: 10px 5px;
+    font-family: var(--feue-font-gba);
+    font-size: 30px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: all 0.2s ease;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+    max-width: max-content;
+    min-width: fit-content;
+}
+
+.feue .level-up:hover {
+    background: linear-gradient(180deg, #b82a3f, #9b2335);
+    border-color: #7a1f2b;
+}
+
+/* ===== TABS ===== */
+.feue .tabs {
+    background: var(--feue-primary);
+    border: groove;
+    border-bottom: 4px solid var(--feue-accent);
+    padding: 0 8px;
+    min-height: fit-content;
+    max-height: fit-content;
+    display: flex;
+    align-items: stretch;
+}
+
+.feue .tabs .item {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 6px 12px;
+    font-family: var(--feue-font-gba);
+    font-weight: normal;
+    font-size: 30px;
+    text-transform: uppercase;
+    letter-spacing: 0px;
+    line-height: 1;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    min-width: min-content;
+    max-width: min-content;
+}
+
+.feue .tabs .item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+}
+
+.feue .tabs .item.active {
+    background: var(--feue-tab-active);
+    color: gold;
+    border-bottom-color: var(--feue-secondary);
+}
+
+/* ===== SHEET BODY ===== */
+.feue .sheet-body {
+    background: var(--feue-bg);
+    padding: 12px;
+    overflow-y: auto;
+}
+
+.feue .tab {
+    display: none;
+}
+
+.feue .tab.active {
+    display: block;
+}
+
+/* ===== SHARED CARD STYLE ===== */
+.feue .attributes,
+.feue .growth-rates,
+.feue .weapon-ranks,
+.feue .combat-stats,
+.feue .weapons-section,
+.feue .items-section,
+.feue .classes-section,
+.feue .skills-section,
+.feue .spells-section,
+.feue .combat-arts-section,
+.feue .battalion-section,
+.feue .inventory-limit,
+.feue .personal-details,
+.feue .biography-text,
+.feue .appearance-text,
+.feue .movement,
+.feue .details {
+    background: var(--feue-card-bg);
+    border: 2px solid var(--feue-border);
+    border-radius: 6px;
+    padding: 12px;
+    box-shadow: var(--feue-card-shadow);
+}
+
+/* ===== MAIN TAB: ATTRIBUTES ===== */
+.feue .attributes,
+.feue .growth-rates {
+    flex: 1;
+    margin-bottom: 12px;
+}
+
+.feue .attributes {
+    margin-right: 12px;
+}
+
+.feue .attributes h3,
+.feue .growth-rates h3 {
+    text-align: center;
+    border-bottom: 2px solid var(--feue-accent);
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+    max-height: fit-content;
+}
+
+.feue .attributes-grid,
+.feue .growth-rates-grid {
+    display: grid;
+    gap: 0;
+}
+
+.feue .attribute,
+.feue .growth-rate {
+    display: flex;
+    align-items: center;
+    padding: 4px 6px;
+    border-bottom: 1px solid rgba(139, 115, 85, 0.15);
+}
+
+.feue .attribute:nth-child(even),
+.feue .growth-rate:nth-child(even) {
+    background: rgba(139, 115, 85, 0.06);
+}
+
+.feue .attribute:last-child,
+.feue .growth-rate:last-child {
+    border-bottom: none;
+}
+
+.feue .attribute-label,
+.feue .growth-label {
+    font-weight: bold;
+    text-transform: uppercase;
+    color: var(--feue-secondary);
+    font-size: 18px;
+}
+
+.feue .attribute-value {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+}
+
+.feue .attribute-value span {
+    color: var(--feue-secondary);
+    font-size: 11px;
+}
+
+.feue .attribute-value input,
+.feue .growth-rate input {
+    /*width: 38px;*/
+    text-align: center;
+    border: 2px solid var(--feue-border);
+    border-radius: 3px;
+    padding: 2px;
+    font-family: var(--feue-font-gba);
+    font-size: 28px;
+    background: white;
+    color: var(--feue-primary);
+    height: 30px;
+}
+
+.feue .attribute-value input:disabled,
+.feue .growth-rate input:disabled {
+    background: transparent;
+    border-color: rgba(194, 169, 106, 0.3);
+    color: var(--feue-primary);
+}
+
+/* ===== MAIN TAB: WEAPON RANKS ===== */
+.feue .weapon-ranks {
+    margin: 12px 0;
+}
+
+.feue .weapon-ranks h3 {
+    text-align: center;
+    border-bottom: 2px solid var(--feue-accent);
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+}
+
+.feue .weapon-ranks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 8px;
+}
+
+.feue .weapon-rank {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 6px;
+    border-radius: 4px;
+}
+
+.feue .weapon-rank.proficient {
+    background: rgba(46, 125, 50, 0.08);
+    border: 1px solid rgba(46, 125, 50, 0.2);
+}
+
+.feue .weapon-label {
+    text-transform: capitalize;
+    font-weight: bold;
+    color: var(--feue-secondary);
+    min-width: 60px;
+    font-size: 15px;
+    text-align: center;
+}
+
+.feue .weapon-rank select {
+    border: 1px solid var(--feue-border);
+    border-radius: 3px;
+    padding: 2px 4px;
+    background: white;
+    font-size: 15px;
+    flex: 1;
+    max-width: fit-content;
+}
+
+.feue .no-proficiency-note {
+    color: #8b4513;
+    font-style: italic;
+    font-size: 17px;
+    margin: 4px 0 8px;
+}
+
+/* Other Weapons (collapsible) */
+.feue .other-weapons-section {
+    margin-top: 10px;
+    border-top: 1px solid rgba(139, 115, 85, 0.25);
+    padding-top: 8px;
+}
+
+.feue .other-weapons-toggle {
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    color: var(--feue-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    user-select: none;
+}
+
+.feue .other-weapons-toggle:hover {
+    color: var(--feue-primary);
+}
+
+.feue .other-weapons-content {
+    margin-top: 8px;
+}
+
+.feue .other-weapons-content .weapon-rank {
+    opacity: 0.6;
+}
+
+.feue .other-weapons-content .weapon-rank:hover {
+    opacity: 1;
+}
+
+.feue .battalion-ranks {
+    margin-top: 12px;
+}
+
+.feue .battalion-ranks-toggle {
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    color: var(--feue-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    user-select: none;
+}
+
+.feue .battalion-ranks-toggle:hover {
+    color: var(--feue-primary);
+}
+
+.feue .battalion-ranks-content .weapon-rank {
+    opacity: 0.6;
+}
+
+.feue .battalion-ranks-content .weapon-rank:hover {
+    opacity: 1;
+}
+
+.feue .weapon-mastery-section {
+    margin-top: 10px;
+    padding: 6px 10px;
+    background: rgba(139, 115, 85, 0.08);
+    border-radius: 4px;
+}
+
+.feue .weapon-mastery-section h4 {
+    margin: 0 0 4px;
+    font-size: 14px;
+}
+
+.feue .weapon-broken {
+    background: rgba(178, 34, 34, 0.08);
+}
+
+.feue .broken-tag {
+    color: #b22222;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+/* ===== MAIN TAB: MOVEMENT & DETAILS ===== */
+.feue .movement,
+.feue .details {
+    flex: 1;
+    margin-top: 12px;
+}
+
+.feue .movement {
+    margin-right: 12px;
+}
+
+.feue .movement h3,
+.feue .details h3 {
+    border-bottom: 2px solid var(--feue-accent);
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+}
+
+.feue .movement .resource,
+.feue .details .resource {
+    justify-content: space-between;
+    padding: 4px 0;
+}
+
+.feue .movement .resource label,
+.feue .details .resource label {
+    font-weight: bold;
+    color: var(--feue-secondary);
+    font-size: 15px;
+}
+
+.feue .movement .resource input,
+.feue .details .resource input,
+.feue .details .resource select {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    border: 1px solid var(--feue-border);
+    border-radius: 3px;
+    padding: 3px 4px;
+    font-family: var(--feue-font-gba);
+    font-size: 30px;
+    background: white;
+    flex-basis: min-content;
+}
+
+.feue .movement .resource input:disabled {
+    background: transparent;
+    border-color: rgba(194, 169, 106, 0.3);
+}
+
+.feue .details .resource select {
+    width: auto;
+    font-family: var(--feue-font-body);
+    font-size: 15px;
+    text-align: left;
+}
+
+/* ===== COMBAT TAB: COMBAT STATS ===== */
+.feue .combat-stats {
+    margin-bottom: 12px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-around;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--feue-header-bg) 0%, var(--feue-primary) 100%);
+    border-color: var(--feue-accent);
+}
+
+.feue .combat-stat {
+    text-align: center;
+    padding: 8px 6px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    min-width: fit-content;
+    flex: 1;
+}
+
+.feue .combat-stat label {
+    display: block;
+    font-weight: bold;
+    color: var(--feue-secondary);
+    font-size: 15px;
+    font-family: var(--feue-font-header);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.feue .computed-value {
+    font-family: var(--feue-font-gba);
+    font-size: 25px;
+    /*font-weight: bold;*/
+    color: white;
+    letter-spacing: 2px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* ===== SECTION HEADERS (shared) ===== */
+.feue .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    border-bottom: 2px solid var(--feue-accent);
+    padding-bottom: 4px;
+    max-height: fit-content;
+}
+
+.feue .section-header h3 {
+    margin: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+/* ===== ITEM ROWS (shared across all tabs) ===== */
+.feue .item {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid var(--feue-border);
+    border-radius: 4px;
+    padding: 6px 8px;
+    margin: 4px 0;
+    align-items: center;
+    transition: all 0.15s ease;
+}
+
+.feue .item:hover {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: var(--feue-secondary);
+}
+
+.feue .item-image {
+    border-radius: 3px;
+}
+
+.feue .item-image img {
+    border: 1px solid var(--feue-border);
+    border-radius: 3px;
+    width: 50px;
+    height: 50px;
+}
+
+.feue .item-name {
+    flex: 1;
+    margin: 0 10px;
+    font-weight: bold;
+    color: var(--feue-text);
+    font-size: 20px;
+    width: max-content;
+}
+
+.feue .item-controls {
+    display: flex;
+    gap: 3px;
+}
+
+.feue .item-control {
+    background: var(--feue-secondary);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 4px 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: 20px;
+}
+
+.feue .item-control:hover {
+    background: #b8860b;
+}
+
+/* Add / Create buttons */
+.feue .item-create {
+    display: inline-flex;
+    gap: 5px;
+    align-items: center;
+    border: 1px solid var(--feue-primary);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 20px;
+    font-family: var(--feue-font-gba);
+    color: white;
+    background: linear-gradient(180deg, var(--feue-tab-active), var(--feue-primary));
+    letter-spacing: 0.3px;
+    transition: all 0.15s ease;
+}
+
+.feue .item-create:hover {
+    background: linear-gradient(180deg, #5e83b6, #2f5485);
+    text-shadow: none;
+}
+
+.feue .item-create.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.feue .limit-note,
+.feue .empty-note,
+.feue .inventory-limit p {
+    color: var(--feue-secondary);
+    font-style: italic;
+    margin: 0;
+    font-size: 20px;
+}
+
+/* ===== WEAPON STAT BADGES ===== */
+.feue .weapon-stats {
+    display: flex;
+    gap: 3px;
+    margin-right: 8px;
+    /*flex-wrap: wrap;*/
+}
+
+.feue .weapon-stats span {
+    background: var(--feue-primary);
+    color: white;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-family: var(--feue-font-gba);
+    font-size: 20px;
+    font-weight: normal;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+/* ===== COMBAT TAB: SECTIONS ===== */
+.feue .weapons-section,
+.feue .battalion-section,
+.feue .combat-arts-section,
+.feue .items-section {
+    margin: 12px 0;
+}
+
+.feue .combat-art-info {
+    flex: 1;
+    margin: 0 10px;
+}
+
+.feue .combat-art-details {
+    margin: 0;
+    font-size: 12px;
+    color: var(--feue-secondary);
+    font-style: italic;
+}
+
+/* ===== INVENTORY TAB ===== */
+.feue .inventory-limit {
+    margin-bottom: 12px;
+}
+
+.feue .inventory-limit h3 {
+    font-family: var(--feue-font-gba);
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.feue .item-quantity {
+    font-family: var(--feue-font-gba);
+    font-size: 25px;
+    color: var(--feue-primary);
+    min-width: 28px;
+    text-align: center;
+    background: rgba(44, 42, 74, 0.08);
+    border-radius: 3px;
+    padding: 2px 6px;
+    margin-right: 6px;
+}
+
+.feue .item-weight {
+    font-family: var(--feue-font-gba);
+    font-size: 20px;
+    color: var(--feue-secondary);
+    min-width: 40px;
+    text-align: center;
+    margin-right: 6px;
+}
+
+/* ===== SKILLS & ABILITIES TAB ===== */
+.feue .classes-section,
+.feue .skills-section,
+.feue .spells-section {
+    flex: 1;
+    margin-bottom: 12px;
+}
+
+.feue .classes-section {
+    margin-right: 12px;
+}
+
+.feue .class-info,
+.feue .skill-info,
+.feue .spell-info {
+    flex: 1;
+    margin: 0 10px;
+}
+
+.feue .class-type,
+.feue .skill-type,
+.feue .spell-details,
+.feue .class-details {
+    margin: 0;
+    font-size: 20px;
+    color: var(--feue-secondary);
+    font-style: italic;
+}
+
+/* ===== ROLEPLAY TAB ===== */
+.feue .personal-details {
+    margin-bottom: 12px;
+}
+
+.feue .personal-details h3 {
+    text-align: center;
+    border-bottom: 2px solid var(--feue-accent);
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+}
+
+.feue .details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+    gap: 10px;
+}
+
+.feue .detail {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.feue .detail label {
+    font-weight: bold;
+    color: var(--feue-secondary);
+    font-size: 16px;
+    text-shadow: 0 0 black;
+}
+
+.feue .detail input {
+    border: 1px solid var(--feue-border);
+    border-radius: 3px;
+    padding: 4px 6px;
+    background: white;
+    font-size: 15px;
+}
+
+.feue .biography-text,
+.feue .appearance-text {
+    margin-bottom: 12px;
+}
+
+.feue .biography-text h3,
+.feue .appearance-text h3 {
+    border-bottom: 2px solid var(--feue-accent);
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+}
+
+.feue .biography-text textarea,
+.feue .appearance-text textarea {
+    width: 100%;
+    border: 1px solid var(--feue-border);
+    border-radius: 4px;
+    padding: 8px;
+    font-family: var(--feue-font-body);
+    font-size: 14px;
+    resize: vertical;
+    background: white;
+}
+
+/* ===== CHAT MESSAGES: LEVEL UP ===== */
+.feue-levelup {
+    background: linear-gradient(135deg, var(--feue-header-bg) 0%, var(--feue-primary) 100%);
+    color: white;
+    padding: 2px;
+    border-radius: 6px;
+    border: 2px solid var(--feue-accent);
+    margin: 5px 0;
+    text-align: center;
+}
+
+.feue-levelup h3 {
+    font-family: var(--feue-font-gba);
+    letter-spacing: 1px;
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    color: var(--feue-secondary);
+}
+
+.feue-levelup .stat-gains {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.feue-levelup .gain {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1px 8px;
+    border-radius: 3px;
+    font-family: var(--feue-font-gba);
+    /*font-weight: bold;*/
+    font-size: 20px;
+    letter-spacing: 0px;
+}
+
+/* ===== CHAT MESSAGES: ATTACK ROLL ===== */
+.feue-attack-roll {
+    background: var(--feue-card-bg);
+    border: 2px solid var(--feue-border);
+    border-radius: 6px;
+    padding: 12px;
+    margin: 5px 0;
+}
+
+.feue-attack-roll h3 {
+    font-family: var(--feue-font-gba);
+    color: var(--feue-primary);
+    letter-spacing: 1px;
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    border-bottom: 1px solid var(--feue-border);
+    padding-bottom: 6px;
+}
+
+.feue-attack-roll p {
+    margin: 4px 0;
+    font-size: 12px;
+}
+
+/* ===== ITEM SHEET: HEADER ===== */
+.feue.item .sheet-header {
+    padding: 8px 12px;
+    min-height: 60px;
+    max-height: 100px;
+}
+
+.feue.item .sheet-header .item-img {
+    width: 80px;
+    height: 80px;
+    border: 2px solid var(--feue-secondary);
+    border-radius: 4px;
+    flex-shrink: 0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.feue.item .sheet-header .header-fields {
+    flex: 1;
+    margin-left: 12px;
+    min-height: 0;
+}
+
+.feue.item .sheet-header .item-name {
+    margin: 0;
+}
+
+.feue.item .sheet-header .item-name input {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: var(--feue-font-header);
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+/* ===== ITEM SHEET: FORMS ===== */
+.feue .form-row {
+    display: flex;
+    gap: 12px;
+    margin: 8px 0;
+}
+
+.feue .form-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 4px;
+    align-items: stretch;
+    text-align: center;
+}
+
+.feue .form-group label {
+    font-weight: bold;
+    color: var(--feue-secondary);
+    font-size: 15px;
+}
+
+.feue .form-group input,
+.feue .form-group select,
+.feue .form-group textarea {
+    border: 1px solid var(--feue-border);
+    border-radius: 3px;
+    padding: 4px 6px;
+    font-size: 15px;
+    background: white;
+}
+
+.feue.item .form-group textarea {
+    max-width: -webkit-fill-available;
+}
+
+.feue .uses-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: center;
+}
+
+.feue .uses-group input {
+    width: 45px;
+    text-align: center;
+}
+
+.feue .uses-group span {
+    font-weight: bold;
+    color: var(--feue-secondary);
+}
+
+/* Item sheet compact overrides */
+.feue.item .form-row {
+    gap: 10px;
+    margin: 6px 0;
+}
+
+.feue.item .form-group {
+    gap: 3px;
+}
+
+.feue.item .form-group label {
+    font-size: 11px;
+    margin-bottom: 1px;
+}
+
+.feue.item .form-group input,
+.feue.item .form-group select,
+.feue.item .form-group textarea {
+    font-size: 11px;
+    padding: 3px 5px;
+}
+
+.feue .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.feue.item .stats-grid {
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.feue.item .stats-grid .form-group {
+    min-width: 0;
+}
+
+.feue.item .stats-grid .form-group input {
+    width: 100%;
+    text-align: center;
+}
+
+/* Class tab */
+.feue.item .tab.class h4 {
+    font-size: 12px;
+    color: var(--feue-primary);
+    margin: 10px 0 6px 0;
+    border-bottom: 1px solid var(--feue-accent);
+    padding-bottom: 2px;
+}
+
+.feue.item .uses-group {
+    align-items: center;
+}
+
+.feue.item .uses-group input {
+    width: 40px;
+}
+
+.feue .class-type {
+    flex: 1;
+    margin: 0 10px;
+    color: var(--feue-text);
+}
+
+.unit-types {
+    display: inline-flex;
+    margin: 8px 8px;
+    gap: 8px;
+    justify-items: stretch;
+    align-items: baseline;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.weapon-proficiencies {
+    display: inline-flex;
+    margin: 8px 8px;
+    gap: 8px;
+    justify-items: stretch;
+    align-items: baseline;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+/* ===== PROMOTION TREE ===== */
+.promo-tree-list {
+    list-style: none;
+    margin: 0 0 0 14px;
+    padding: 0 0 0 12px;
+    border-left: 2px solid rgba(44, 72, 117, 0.2);
+}
+
+.promo-tree-node {
+    margin: 6px 0;
+}
+
+.promo-tree-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px;
+    border: 1px solid var(--feue-border);
+    border-radius: 4px;
+    background: var(--feue-card-bg);
+    transition: all 0.15s ease;
+}
+
+.promo-tree-row:hover {
+    border-color: var(--feue-secondary);
+}
+
+.promo-tree-label {
+    flex: 1;
+}
+
+.promo-tree-type {
+    font-size: 11px;
+    opacity: 0.7;
+}
+
+.promo-tree-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 8px;
+    font-size: 11px;
+    color: #2e7d32;
+    font-weight: bold;
+}
+
+.promo-tree-node.is-selected .promo-tree-row {
+    background: rgba(46, 125, 50, 0.08);
+    border-color: #2e7d32;
+}
+
+/* ===== CLASS SKILLS (Item Sheet) ===== */
+.feue .class-skills-list {
+    min-height: 40px;
+    border: 1px dashed rgb(184, 160, 128);
+    padding: 8px;
+    border-radius: 4px;
+    background: rgba(139, 115, 85, 0.05);
+    display: grid;
+    justify-items: stretch;
+    justify-content: space-evenly;
+    gap: 10px;
+}
+
+.feue .class-skill-entry {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 2px;
+    border-bottom: 1px solid rgba(139, 115, 85, 0.15);
+}
+
+.feue .class-skill-entry:last-child {
+    border-bottom: none;
+}
+
+.feue .class-skill-entry img {
+    border: 1px solid var(--feue-border);
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.feue .class-skill-name {
+    flex: 1;
+    font-size: 17px;
+    font-weight: bold;
+    color: var(--feue-secondary);
+}
+
+.feue .class-skill-level {
+    /*width: 75px;*/
+    font-size: 12px;
+    border: 1px solid var(--feue-border);
+    border-radius: 3px;
+    padding: 2px 4px;
+}
+
+.feue .class-skill-remove {
+    cursor: pointer;
+    color: #a0522d;
+    flex-shrink: 0;
+}
+
+.feue .class-skill-remove:hover {
+    color: #c0392b;
+}
+
+.feue .class-skills-empty {
+    color: #8b4513;
+    font-style: italic;
+    font-size: 16px;
+    margin: 4px 0;
+}
+
+/* ===== LEVEL UP BONUS ITEM ===== */
+.feue .level-up-bonus-item {
+    background: rgba(218, 165, 32, 0.08);
+    border-left: 3px solid var(--feue-accent);
+}
+
+.feue .level-up-bonus-item .item-name {
+    font-weight: bold;
+    color: var(--feue-accent);
+}
+
+/* ===== UTILITY CLASSES ===== */
+.feue .flexrow {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    gap: 5.73px;
+    align-items: baseline;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.feue .flexcol {
+    display: flex;
+    flex-direction: column;
+}
+
+.feue .flex {
+    flex: 1;
+}
+
+.feue .text-center {
+    text-align: center;
+}
+
+.feue .fe-gba {
+    font-family: var(--feue-font-gba);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* ===== STATUS EFFECTS ===== */
+.feue .status-effects-section {
+    margin-top: 8px;
+}
+
+.feue .status-effects-section .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.feue .status-effects-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.feue .status-effect {
+    align-items: center;
+    gap: 8px;
+    padding: 4px 6px;
+    background: rgba(139, 69, 19, 0.08);
+    border: 1px solid var(--feue-border);
+    border-radius: 4px;
+}
+
+.feue .effect-name {
+    flex: 1;
+    font-weight: bold;
+    color: var(--feue-accent);
+}
+
+.feue .effect-duration {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.feue .effect-duration input {
+    width: 40px;
+    text-align: center;
+}
+
+.feue .status-effect-remove {
+    cursor: pointer;
+    color: #a0522d;
+}
+
+.feue .status-effect-add {
+    cursor: pointer;
+    color: var(--feue-accent);
+}
+
+/* ===== SUPPORTS ===== */
+.feue .supports-section {
+    margin-top: 8px;
+}
+
+.feue .supports-section .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.feue .supports-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.feue .support-entry {
+    align-items: center;
+    gap: 8px;
+    padding: 4px 6px;
+    background: rgba(44, 72, 117, 0.08);
+    border: 1px solid var(--feue-border);
+    border-radius: 4px;
+}
+
+.feue .support-name {
+    flex: 1;
+    font-weight: bold;
+}
+
+.feue .support-affinity {
+    font-size: 11px;
+    color: #666;
+}
+
+.feue .support-rank-select {
+    width: 45px;
+}
+
+.feue .support-bonus {
+    font-size: 11px;
+    color: var(--feue-accent);
+}
+
+.feue .support-remove {
+    cursor: pointer;
+    color: #a0522d;
+}
+
+.feue .support-add {
+    cursor: pointer;
+    color: var(--feue-accent);
+}
+
+/* ===== WEAPON EXP ===== */
+.feue .wexp-display {
+    font-weight: bold;
+    color: var(--feue-accent);
+    font-size: 12px;
+}
+
+.feue .wexp-spend {
+    cursor: pointer;
+    color: var(--feue-accent);
+    margin-left: 4px;
+}
+
+.feue .wexp-spend:hover {
+    color: #2c4875;
+}
+
+/* ===== CONSUMABLE USES ===== */
+.feue .item-uses {
+    font-size: 11px;
+    color: #666;
+    margin-right: 4px;
+}
+
+/* ===== SKILL ACTIVATION ===== */
+.feue .skill-activation {
+    font-size: 10px;
+    color: #666;
+    font-style: italic;
+    margin: 0;
+}
+
+.feue .use-skill i {
+    color: #daa520;
+}
+
+/* ===== STAT CAP GREEN ===== */
+.feue .attribute.at-cap input,
+.feue .attribute.at-cap span {
+    color: #228b22 !important;
+    font-weight: bold;
+}
+
+.feue .attribute.at-cap .attribute-label {
+    color: #228b22;
+    font-weight: bold;
+}
+
+/* ===== LEVEL RESET BUTTON ===== */
+.feue .level-reset {
+    background: linear-gradient(180deg, #a04040, #752020);
+    color: white;
+    border: 1px solid #601010;
+    border-radius: 4px;
+    padding: 2px 6px;
+    cursor: pointer;
+    font-size: 11px;
+    margin-left: 4px;
+}
+
+.feue .level-reset:hover {
+    background: linear-gradient(180deg, #c05050, #903030);
+}
+
+/* ===== WEAPON USES ON COMBAT TAB ===== */
+.feue .weapon-uses {
+    color: #666;
+    font-size: 11px;
+    font-style: italic;
+}
+
+/* ===== LEVEL RESET CHAT ===== */
+.feue-level-reset {
+    border-left: 3px solid #a04040;
+    padding-left: 8px;
+}
+
+/* ===== STATUS UPDATE CHAT ===== */
+.feue-status-update {
+    border-left: 3px solid #daa520;
+    padding-left: 8px;
+    font-style: italic;
+}
+
+/* ===== TARGET NOTE IN CHAT ===== */
+.feue-target {
+    color: #4a6fa5;
+    font-style: italic;
+    margin: 2px 0;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 800px) {
+    .feue .sheet-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .feue .flexrow {
+        flex-direction: column;
+    }
+
+    .feue .attributes,
+    .feue .growth-rates,
+    .feue .classes-section,
+    .feue .skills-section {
+        margin-right: 0;
+        margin-bottom: 12px;
+    }
+
+    .feue .movement {
+        margin-right: 0;
+    }
+
+    .feue .combat-stats {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .feue .weapon-ranks-grid,
+    .feue .details-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .feue.item .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .feue.item .form-row {
+        flex-direction: column;
+    }
+}
+
+/* ==================================================================== */
+/* Party Sheet                                                          */
+/* ==================================================================== */
+.feue.party-sheet .party-actions { gap: 6px; margin-top: 4px; }
+.feue.party-sheet .party-actions button {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(212, 175, 55, 0.5);
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-weight: 600;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.6);
+    transition: background 0.15s, border-color 0.15s;
+}
+.feue.party-sheet .party-actions button:hover {
+    background: rgba(212, 175, 55, 0.25);
+    border-color: var(--feue-secondary);
+    color: #fff;
+}
+.feue.party-sheet .party-actions button i { margin-right: 4px; color: var(--feue-secondary); }
+.feue.party-sheet .party-gold-adjust {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(212, 175, 55, 0.5);
+    color: #fff;
+}
+.feue.party-sheet .party-gold-adjust:hover {
+    background: rgba(212, 175, 55, 0.25);
+    border-color: var(--feue-secondary);
+    color: #fff;
+}
+.feue.party-sheet .party-body { padding: 8px; }
+.feue.party-sheet .party-drop-hint {
+    padding: 6px 10px; margin-bottom: 8px;
+    border: 1px dashed #b8a080; border-radius: 4px;
+    background: rgba(139, 115, 85, 0.05); color: #8b4513;
+    font-size: 12px; font-style: italic;
+}
+.feue.party-sheet .party-empty {
+    color: #888; font-style: italic; text-align: center; padding: 20px;
+}
+.feue.party-sheet .party-members-list {
+    display: flex; flex-direction: column; gap: 4px;
+}
+.feue.party-sheet .party-member {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 8px; border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 4px; background: rgba(255, 255, 255, 0.5);
+}
+.feue.party-sheet .party-member img {
+    border: 1px solid #999; border-radius: 2px; flex-shrink: 0;
+}
+.feue.party-sheet .party-member-info { flex: 1; min-width: 0; }
+.feue.party-sheet .party-member-name { font-weight: bold; color: #2c4875; }
+.feue.party-sheet .party-member-meta { font-size: 11px; color: #666; }
+.feue.party-sheet .party-member-controls { display: flex; gap: 6px; }
+.feue.party-sheet .party-member-controls a { cursor: pointer; color: #555; }
+.feue.party-sheet .party-member-controls a:hover { color: #2c4875; }
+.feue.party-sheet .party-notes { margin-top: 12px; }
+.feue.party-sheet .party-notes textarea { width: 100%; }
+
+/* ==================================================================== */
+/* Shop Sheet                                                           */
+/* ==================================================================== */
+.feue.shop-sheet .shop-status .open-badge {
+    background: #5a8a5a; color: #fff; padding: 2px 8px; border-radius: 3px;
+    font-weight: bold; font-size: 11px;
+}
+.feue.shop-sheet .shop-status .closed-badge {
+    background: #a0522d; color: #fff; padding: 2px 8px; border-radius: 3px;
+    font-weight: bold; font-size: 11px;
+}
+.feue.shop-sheet .shop-config {
+    gap: 8px; margin-top: 6px; align-items: flex-end;
+}
+.feue.shop-sheet .shop-config .form-group {
+    display: flex; flex-direction: column; flex: 1;
+}
+.feue.shop-sheet .shop-config label { font-size: 11px; color: #555; }
+.feue.shop-sheet .shop-body { padding: 8px; }
+.feue.shop-sheet .shop-drop-hint {
+    padding: 6px 10px; margin-bottom: 8px;
+    border: 1px dashed #b8a080; border-radius: 4px;
+    background: rgba(139, 115, 85, 0.05); color: #8b4513;
+    font-size: 12px; font-style: italic;
+}
+.feue.shop-sheet .shop-stock-header {
+    align-items: center; margin-bottom: 6px;
+}
+.feue.shop-sheet .shop-stock-table {
+    width: 100%; border-collapse: collapse; font-size: 12px;
+}
+.feue.shop-sheet .shop-stock-table th,
+.feue.shop-sheet .shop-stock-table td {
+    padding: 4px 6px; border-bottom: 1px solid rgba(0, 0, 0, 0.08); text-align: left;
+}
+.feue.shop-sheet .shop-stock-table th {
+    background: rgba(44, 72, 117, 0.08); font-weight: bold;
+}
+.feue.shop-sheet .shop-item-controls { display: flex; gap: 6px; }
+.feue.shop-sheet .shop-item-controls a { cursor: pointer; color: #555; }
+.feue.shop-sheet .shop-item-controls a:hover { color: #2c4875; }
+.feue.shop-sheet .shop-item-controls .shop-item-buy { color: #5a8a5a; }
+.feue.shop-sheet .shop-item-controls .shop-item-delete { color: #a0522d; }
+.feue.shop-sheet .shop-empty {
+    color: #888; font-style: italic; text-align: center; padding: 20px;
+}
+.feue.shop-sheet .shop-notes { margin-top: 12px; }
+.feue.shop-sheet .shop-notes textarea { width: 100%; }
+
+.feue-shop-tx h3, .feue-party-xp h3 { margin: 0 0 4px; color: #2c4875; }
+
+/* ==================================================================== */
+/* Holy Blood (alt rule)                                                */
+/* ==================================================================== */
+.feue .holy-blood-section { margin-bottom: 12px; }
+.feue .holy-blood-section .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 4px;
+}
+.feue .holy-blood-section .holy-blood-add {
+    cursor: pointer; color: #2c4875; font-size: 12px;
+}
+.feue .holy-blood-section .holy-blood-add:hover { color: #1a2a4a; }
+.feue .holy-blood-list {
+    display: flex; flex-direction: column; gap: 4px;
+}
+.feue .holy-blood-entry {
+    display: flex; align-items: center; gap: 6px;
+    padding: 4px 6px; border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 4px; background: rgba(255, 255, 255, 0.5);
+}
+.feue .holy-blood-entry select { flex: 0 0 auto; min-width: 90px; font-size: 12px; }
+.feue .holy-blood-entry .holy-blood-weapon {
+    flex: 1; font-style: italic; color: #8b4513; font-size: 12px;
+}
+.feue .holy-blood-entry .holy-blood-remove {
+    cursor: pointer; color: #a0522d;
+}
+.feue .holy-blood-empty {
+    color: #888; font-style: italic; font-size: 12px;
+    margin: 4px 0; padding: 6px;
+    border: 1px dashed #b8a080; border-radius: 4px;
+    background: rgba(139, 115, 85, 0.05);
+}
+
+/* ==================================================================== */
+/* Fatigue / Crests / Reclass (alt rules)                              */
+/* ==================================================================== */
+.feue .fatigue-section { margin: 8px 0; padding: 6px 8px; border: 1px solid rgba(0,0,0,0.1); border-radius: 4px; background: rgba(255,255,255,0.5); }
+.feue .fatigue-section .section-header { display: flex; align-items: center; gap: 8px; }
+.feue .fatigue-section .fatigue-display { font-weight: bold; color: #2c4875; }
+.feue .fatigue-section.fatigued { background: rgba(220, 60, 60, 0.08); border-color: rgba(180, 40, 40, 0.35); }
+.feue .fatigue-section .fatigue-warning { margin: 4px 0 0; color: #a0522d; font-size: 12px; }
+
+.feue .crests-section, .feue .reclass-section { margin-bottom: 12px; }
+.feue .crests-section .section-header,
+.feue .reclass-section .section-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+.feue .crest-list, .feue .alt-class-list { display: flex; flex-direction: column; gap: 4px; }
+.feue .crest-entry, .feue .alt-class-entry {
+    display: flex; align-items: center; gap: 6px;
+    padding: 4px 6px; border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 4px; background: rgba(255,255,255,0.5);
+}
+.feue .crest-entry input[type="text"] { flex: 1; font-size: 12px; }
+.feue .crest-entry select { flex: 0 0 auto; min-width: 80px; font-size: 12px; }
+.feue .crest-remove, .feue .crest-edit-reductions,
+.feue .alt-class-remove { cursor: pointer; color: #a0522d; }
+.feue .alt-class-name { flex: 1; font-size: 12px; }
+.feue .alt-class-type { color: #888; font-style: italic; }
+.feue .crest-empty, .feue .alt-class-empty {
+    color: #888; font-style: italic; font-size: 12px;
+    margin: 4px 0; padding: 6px;
+    border: 1px dashed #b8a080; border-radius: 4px;
+    background: rgba(139, 115, 85, 0.05);
+}
+
+/* Collapsible bonus sections on item sheets */
+.feue-bonus-section .bonus-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 4px;
+}
+.feue-bonus-section .bonus-header h3 { margin: 0; }
+.feue-bonus-section .bonus-toggle {
+    cursor: pointer; font-size: 11px; color: #2c4875;
+    padding: 2px 8px; border: 1px solid #b8a080; border-radius: 4px;
+    background: rgba(139, 115, 85, 0.1);
+}
+.feue-bonus-section .bonus-toggle:hover { background: rgba(139, 115, 85, 0.25); }
+.feue-bonus-section.collapsed .bonus-zero { display: none; }
+.feue-bonus-section.collapsed .form-row:not(:has(.form-group:not(.bonus-zero))) { display: none; }
+
+/* Weapon Special Properties */
+.feue-weapon-properties .weapon-props-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px 12px;
+    margin-top: 4px;
+}
+.feue-weapon-properties .weapon-props-grid label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+.feue-weapon-properties .weapon-slayer-types {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin-top: 6px;
+    padding: 6px 8px;
+    background: rgba(139, 115, 85, 0.08);
+    border: 1px dashed rgba(139, 115, 85, 0.4);
+    border-radius: 4px;
+}
+.feue-weapon-properties .weapon-slayer-types label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+}
