@@ -19,21 +19,21 @@
     "fires-of-war.js"
   ],
   "documentTypes": {
-    "Actor": [
-      "character",
-      "party",
-      "shop"
-    ],
-    "Item": [
-      "weapon",
-      "item",
-      "skill",
-      "spell",
-      "class",
-      "battalion",
-      "combatArt",
-      "miscBonus"
-    ]
+    "Actor": {
+      "character": {},
+      "party": {},
+      "shop": {}
+    },
+    "Item": {
+      "weapon": {},
+      "item": {},
+      "skill": {},
+      "spell": {},
+      "class": {},
+      "battalion": {},
+      "combatArt": {},
+      "miscBonus": {}
+    }
   },
   "styles": [
     "styles/fires-of-war.css"
