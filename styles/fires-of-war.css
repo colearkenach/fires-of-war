@@ -17,13 +17,6 @@
     font-style: normal;
 }
 
-@font-face {
-    font-family: "gba-text";
-    src: url("../fonts/gba-text.otf") format("opentype");
-    font-weight: normal;
-    font-style: normal;
-}
-
 /* ===== CUSTOM PROPERTIES ===== */
 :root {
     --feue-primary: #2c2a4a;
@@ -35,12 +28,12 @@
     --feue-header-bg: #1b1a33;
     --feue-tab-active: #3f3c77;
     --feue-card-bg: #fdf8ef;
+    --feue-label: #6b5313;
     --feue-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08),
                         inset 0 1px 0 rgba(255, 255, 255, 0.6);
 
     --feue-font-body: "NocturneSerif-Regular", "Times New Roman", serif;
     --feue-font-header: "ChiaroStd-Bold", "Georgia", serif;
-    --feue-font-gba: "gba-text", monospace;
 }
 
 /* ===== BASE ===== */
@@ -87,25 +80,26 @@
 .feue .sheet-header {
     background: linear-gradient(135deg, var(--feue-header-bg) 0%, var(--feue-primary) 100%);
     color: white;
-    padding: 12px 16px;
+    padding: 8px 12px;
     border-bottom: 3px solid var(--feue-accent);
-    min-height: 100px;
-    max-height: 175px;
-    overflow: hidden;
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
     font-family: var(--feue-font-header);
+    flex: 0 0 auto;
 }
 
 .feue .sheet-header.flexrow {
     align-items: center;
-    gap: 16px;
+    gap: 12px;
 }
 
 .feue .profile-img {
     border: 3px solid var(--feue-secondary);
     border-radius: 6px;
     object-fit: cover;
-    width: 150px;
-    height: 150px;
+    width: 76px;
+    height: 76px;
     flex-shrink: 0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
@@ -124,23 +118,23 @@
     background: transparent;
     border: 3px solid var(--feue-secondary);
     color: white;
-    font-size: 22px;
+    font-size: 18px;
     /*font-weight: bold;*/
     /*text-transform: uppercase;*/
     letter-spacing: 1px;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
-    padding: 2px 10px;
+    padding: 2px 8px;
     margin: 0;
 }
 
 .feue .header-row {
     display: flex;
-    gap: 16px;
+    gap: 8px;
     align-items: center;
 }
 
 .feue .resource {
-    margin: 5px 5px;
+    margin: 2px 3px;
     align-items: center;
     min-width: fit-content;
 }
@@ -149,16 +143,16 @@
     /*font-weight: bold;*/
     /*min-width: 55px;*/
     color: var(--feue-secondary);
-    font-size: 30px;
-    font-family: var(--feue-font-gba);
+    font-size: 14px;
+    font-family: var(--feue-font-body);
     text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
 }
 
 .feue .resource-value {
     color: rgba(255, 255, 255, 0.9);
-    font-family: var(--feue-font-gba);
-    font-size: 30px;
-    letter-spacing: 2px;
+    font-family: var(--feue-font-body);
+    font-size: 15px;
+    letter-spacing: 1px;
     min-width:fit-content;
 }
 
@@ -170,8 +164,8 @@
     padding: 2px 6px;
     border-radius: 3px;
     width: 50px;
-    font-size: 25px;
-    font-family: var(--feue-font-gba);
+    font-size: 15px;
+    font-family: var(--feue-font-body);
     text-align: center;
 }
 
@@ -187,9 +181,9 @@
 }
 
 .feue .hp-fields .hp-current {
-    width: 50px;
-    font-size: 25px;
-    font-family: var(--feue-font-gba);
+    width: 44px;
+    font-size: 15px;
+    font-family: var(--feue-font-body);
     color: #90ee90;
     text-align: center;
 }
@@ -199,8 +193,8 @@
 }
 
 .feue .hp-fields .hp-max {
-    font-family: var(--feue-font-gba);
-    font-size: 25px;
+    font-family: var(--feue-font-body);
+    font-size: 15px;
     color: rgba(255, 255, 255, 0.7);
 }
 
@@ -210,13 +204,13 @@
     color: white;
     border: 1px solid #5a1520;
     border-radius: 4px;
-    padding: 10px 5px;
-    font-family: var(--feue-font-gba);
-    font-size: 30px;
+    padding: 3px 6px;
+    font-family: var(--feue-font-body);
+    font-size: 13px;
     letter-spacing: 1px;
     text-transform: uppercase;
     cursor: pointer;
-    margin-left: 8px;
+    margin-left: 4px;
     transition: all 0.2s ease;
     text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
     max-width: max-content;
@@ -246,17 +240,20 @@
     border: none;
     border-bottom: 2px solid transparent;
     padding: 6px 12px;
-    font-family: var(--feue-font-gba);
+    font-family: var(--feue-font-body);
     font-weight: normal;
-    font-size: 30px;
+    font-size: 18px;
     text-transform: uppercase;
     letter-spacing: 0px;
     line-height: 1;
     transition: all 0.15s ease;
     display: flex;
     align-items: center;
-    min-width: min-content;
-    max-width: min-content;
+    min-width: 0;
+    max-width: none;
+    flex: 1;
+    justify-content: center;
+    text-align: center;
 }
 
 .feue .tabs .item:hover {
@@ -273,7 +270,7 @@
 /* ===== SHEET BODY ===== */
 .feue .sheet-body {
     background: var(--feue-bg);
-    padding: 12px;
+    padding: 10px;
     overflow-y: auto;
 }
 
@@ -298,6 +295,7 @@
 .feue .combat-arts-section,
 .feue .battalion-section,
 .feue .inventory-limit,
+.feue .roleplay-traits-section,
 .feue .personal-details,
 .feue .biography-text,
 .feue .appearance-text,
@@ -306,7 +304,7 @@
     background: var(--feue-card-bg);
     border: 2px solid var(--feue-border);
     border-radius: 6px;
-    padding: 12px;
+    padding: 10px;
     box-shadow: var(--feue-card-shadow);
 }
 
@@ -317,8 +315,14 @@
     margin-bottom: 12px;
 }
 
+.feue .main-stat-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 10px;
+}
+
 .feue .attributes {
-    margin-right: 12px;
+    margin-right: 0;
 }
 
 .feue .attributes h3,
@@ -358,8 +362,21 @@
 .feue .growth-label {
     font-weight: bold;
     text-transform: uppercase;
-    color: var(--feue-secondary);
-    font-size: 18px;
+    color: var(--feue-label);
+    font-size: 16px;
+}
+
+.feue .attribute > .attribute-label {
+    width: 74px;
+    padding: 2px 7px;
+    flex: 0 0 74px;
+}
+
+.feue .section-hint {
+    margin: -3px 0 7px;
+    color: #665f52;
+    font-size: 12px;
+    line-height: 1.25;
 }
 
 .feue .attribute-value {
@@ -381,8 +398,8 @@
     border: 2px solid var(--feue-border);
     border-radius: 3px;
     padding: 2px;
-    font-family: var(--feue-font-gba);
-    font-size: 28px;
+    font-family: var(--feue-font-body);
+    font-size: 22px;
     background: white;
     color: var(--feue-primary);
     height: 30px;
@@ -429,7 +446,7 @@
 .feue .weapon-label {
     text-transform: capitalize;
     font-weight: bold;
-    color: var(--feue-secondary);
+    color: var(--feue-label);
     min-width: 60px;
     font-size: 15px;
     text-align: center;
@@ -450,6 +467,12 @@
     font-style: italic;
     font-size: 17px;
     margin: 4px 0 8px;
+}
+
+.feue .wexp-spend.disabled {
+    opacity: 0.35;
+    pointer-events: none;
+    cursor: default;
 }
 
 /* Other Weapons (collapsible) */
@@ -575,7 +598,7 @@
     border: 1px solid var(--feue-border);
     border-radius: 3px;
     padding: 3px 4px;
-    font-family: var(--feue-font-gba);
+    font-family: var(--feue-font-body);
     font-size: 30px;
     background: white;
     flex-basis: min-content;
@@ -618,7 +641,7 @@
     display: block;
     font-weight: bold;
     color: var(--feue-secondary);
-    font-size: 15px;
+    font-size: 12px;
     font-family: var(--feue-font-header);
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -626,8 +649,8 @@
 }
 
 .feue .computed-value {
-    font-family: var(--feue-font-gba);
-    font-size: 25px;
+    font-family: var(--feue-font-body);
+    font-size: 20px;
     /*font-weight: bold;*/
     color: white;
     letter-spacing: 2px;
@@ -674,8 +697,8 @@
 .feue .item-image img {
     border: 1px solid var(--feue-border);
     border-radius: 3px;
-    width: 50px;
-    height: 50px;
+    width: 36px;
+    height: 36px;
 }
 
 .feue .item-name {
@@ -683,7 +706,7 @@
     margin: 0 10px;
     font-weight: bold;
     color: var(--feue-text);
-    font-size: 20px;
+    font-size: 17px;
     width: max-content;
 }
 
@@ -700,7 +723,7 @@
     padding: 4px 6px;
     cursor: pointer;
     transition: all 0.15s ease;
-    font-size: 20px;
+    font-size: 16px;
 }
 
 .feue .item-control:hover {
@@ -715,8 +738,8 @@
     border: 1px solid var(--feue-primary);
     border-radius: 4px;
     padding: 2px 8px;
-    font-size: 20px;
-    font-family: var(--feue-font-gba);
+    font-size: 16px;
+    font-family: var(--feue-font-body);
     color: white;
     background: linear-gradient(180deg, var(--feue-tab-active), var(--feue-primary));
     letter-spacing: 0.3px;
@@ -736,10 +759,10 @@
 .feue .limit-note,
 .feue .empty-note,
 .feue .inventory-limit p {
-    color: var(--feue-secondary);
+    color: var(--feue-label);
     font-style: italic;
     margin: 0;
-    font-size: 20px;
+    font-size: 15px;
 }
 
 /* ===== WEAPON STAT BADGES ===== */
@@ -747,7 +770,8 @@
     display: flex;
     gap: 3px;
     margin-right: 8px;
-    /*flex-wrap: wrap;*/
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .feue .weapon-stats span {
@@ -755,11 +779,39 @@
     color: white;
     padding: 2px 7px;
     border-radius: 10px;
-    font-family: var(--feue-font-gba);
-    font-size: 20px;
+    font-family: var(--feue-font-body);
+    font-size: 15px;
     font-weight: normal;
     line-height: 1.4;
     white-space: nowrap;
+}
+
+.feue .weapon-name-block {
+    flex: 1;
+    min-width: 120px;
+    margin: 0 8px;
+}
+
+.feue .weapon-name-block .item-name {
+    margin: 0;
+    width: auto;
+}
+
+.feue .rank-requirement {
+    display: block;
+    margin-top: 2px;
+    color: #5f6f5f;
+    font-size: 11px;
+    line-height: 1.2;
+}
+
+.feue .rank-requirement.not-usable {
+    color: #9b2226;
+    font-weight: 700;
+}
+
+.feue .weapon-rank-warning {
+    border-left: 4px solid #b23a3a;
 }
 
 /* ===== COMBAT TAB: SECTIONS ===== */
@@ -788,13 +840,13 @@
 }
 
 .feue .inventory-limit h3 {
-    font-family: var(--feue-font-gba);
+    font-family: var(--feue-font-body);
     font-size: 12px;
     margin-bottom: 4px;
 }
 
 .feue .item-quantity {
-    font-family: var(--feue-font-gba);
+    font-family: var(--feue-font-body);
     font-size: 25px;
     color: var(--feue-primary);
     min-width: 28px;
@@ -806,7 +858,7 @@
 }
 
 .feue .item-weight {
-    font-family: var(--feue-font-gba);
+    font-family: var(--feue-font-body);
     font-size: 20px;
     color: var(--feue-secondary);
     min-width: 40px;
@@ -838,12 +890,152 @@
 .feue .spell-details,
 .feue .class-details {
     margin: 0;
-    font-size: 20px;
-    color: var(--feue-secondary);
+    font-size: 15px;
+    color: var(--feue-label);
     font-style: italic;
 }
 
 /* ===== ROLEPLAY TAB ===== */
+.feue .roleplay-traits-section {
+    margin-bottom: 12px;
+}
+
+.feue .roleplay-traits-header {
+    align-items: center;
+    border-bottom: 2px solid var(--feue-accent);
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+}
+
+.feue .roleplay-traits-header h3,
+.feue .roleplay-trait-source h4 {
+    margin: 0;
+}
+
+.feue .roll-roleplay-no-trait,
+.feue .configure-roleplay-traits,
+.feue .roll-roleplay-trait {
+    border: 1px solid var(--feue-border);
+    border-radius: 4px;
+    background: linear-gradient(180deg, #fffdf5, #eadfbe);
+    color: var(--feue-primary);
+    cursor: pointer;
+    box-shadow: none;
+}
+
+.feue .roll-roleplay-no-trait:hover,
+.feue .configure-roleplay-traits:hover,
+.feue .roll-roleplay-trait:hover {
+    border-color: var(--feue-accent);
+    background: #fff7d9;
+}
+
+.feue .roll-roleplay-no-trait {
+    flex: 0 0 auto;
+    width: auto;
+    min-height: 28px;
+    padding: 3px 10px;
+}
+
+.feue .roleplay-trait-sources {
+    display: grid;
+    gap: 8px;
+}
+
+.feue .roleplay-trait-source {
+    border: 1px solid rgba(139, 115, 85, 0.45);
+    border-radius: 5px;
+    padding: 7px;
+    background: rgba(139, 115, 85, 0.05);
+}
+
+.feue .roleplay-trait-source-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.feue .roleplay-trait-source-header h4 {
+    color: var(--feue-secondary);
+    font-size: 15px;
+}
+
+.feue .configure-roleplay-traits {
+    width: auto;
+    min-height: 25px;
+    padding: 2px 8px;
+    font-size: 11px;
+}
+
+.feue .roleplay-trait-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.feue .roll-roleplay-trait {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 5px 7px;
+    font-family: var(--feue-font-body);
+    font-size: 13px;
+}
+
+.feue .roll-roleplay-trait small {
+    color: #795c18;
+    font-size: 9px;
+    text-transform: uppercase;
+}
+
+.feue .personal-trait-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 9px;
+    border-top: 1px solid rgba(139, 115, 85, 0.4);
+}
+
+.feue .personal-trait-row label {
+    color: var(--feue-secondary);
+    font-weight: bold;
+}
+
+.feue .personal-trait-row input {
+    min-width: 0;
+    border: 1px solid var(--feue-border);
+    border-radius: 3px;
+    padding: 5px 7px;
+    background: white;
+}
+
+.feue .personal-trait-roll {
+    min-height: 30px;
+}
+
+.feue .roleplay-traits-empty {
+    color: #665f52;
+    font-style: italic;
+}
+
+.feue-trait-swap-row {
+    display: grid;
+    grid-template-columns: 70px minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.feue-trait-swap-row label {
+    font-weight: bold;
+}
+
 .feue .personal-details {
     margin-bottom: 12px;
 }
@@ -918,7 +1110,7 @@
 }
 
 .feue-levelup h3 {
-    font-family: var(--feue-font-gba);
+    font-family: var(--feue-font-body);
     letter-spacing: 1px;
     margin: 0 0 8px 0;
     font-size: 20px;
@@ -938,7 +1130,7 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     padding: 1px 8px;
     border-radius: 3px;
-    font-family: var(--feue-font-gba);
+    font-family: var(--feue-font-body);
     /*font-weight: bold;*/
     font-size: 20px;
     letter-spacing: 0px;
@@ -954,7 +1146,7 @@
 }
 
 .feue-attack-roll h3 {
-    font-family: var(--feue-font-gba);
+    font-family: var(--feue-font-body);
     color: var(--feue-primary);
     letter-spacing: 1px;
     margin: 0 0 8px 0;
@@ -1295,7 +1487,7 @@
 }
 
 .feue .fe-gba {
-    font-family: var(--feue-font-gba);
+    font-family: var(--feue-font-body);
     letter-spacing: 1px;
     text-transform: uppercase;
 }
@@ -1341,6 +1533,28 @@
 .feue .effect-duration input {
     width: 40px;
     text-align: center;
+}
+
+/* Condition icons match the token status icons (white glyphs on a dark disc). */
+.feue .status-effect .effect-icon {
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+    padding: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 50%;
+    background: rgba(10, 16, 32, 0.85);
+}
+
+.feue .status-effect .effect-icon.blank {
+    border-color: transparent;
+    background: none;
+}
+
+.feue .effect-permanent {
+    width: 40px;
+    text-align: center;
+    font-size: 1.2em;
 }
 
 .feue .status-effect-remove {
@@ -1499,6 +1713,164 @@
     margin: 2px 0;
 }
 
+/* ===== ROLEPLAY TRAIT CHECK CHAT ===== */
+.feue-trait-check {
+    border-left: 4px solid var(--feue-accent);
+    padding: 6px 8px;
+    background: rgba(44, 42, 74, 0.08);
+}
+
+.feue-trait-check.success {
+    border-left-color: #2f8b42;
+}
+
+.feue-trait-check.failure {
+    border-left-color: #a63c32;
+}
+
+.feue-trait-check h3 {
+    margin: 0 0 4px;
+    color: var(--feue-primary);
+}
+
+.feue-trait-check p {
+    margin: 0;
+}
+
+/* ===== CLASS ROLEPLAY TRAIT EDITOR ===== */
+.feue .class-roleplay-traits-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.feue .class-roleplay-traits-header h3 {
+    margin: 0;
+}
+
+.feue .class-roleplay-traits-header span {
+    color: #666;
+    font-size: 11px;
+    font-style: italic;
+}
+
+.feue .class-roleplay-traits-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px 8px;
+    text-align: left;
+}
+
+.feue .class-roleplay-trait-row {
+    display: contents;
+}
+
+/* ===== QUICK ACTION DIALOG ===== */
+.feue-token-action-dialog .window-content {
+    background: #f7f0df;
+    color: #211f36;
+}
+
+.feue-token-actions-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: min(70vh, 620px);
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.feue-token-actions-menu section {
+    border: 1px solid #b89b58;
+    border-radius: 5px;
+    padding: 6px;
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.feue-token-actions-menu section h3 {
+    margin: 0 0 5px;
+    padding-bottom: 3px;
+    color: #6f1f2b;
+    border-bottom: 1px solid #9b2335;
+    font-size: 14px;
+}
+
+.feue-token-action-target {
+    margin: 0;
+    padding: 6px 8px;
+    border-radius: 4px;
+    color: #f7f0df;
+    background: #2c2a4a;
+}
+
+.feue-token-action-row {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr) 20px;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 38px;
+    margin: 3px 0;
+    padding: 3px 7px;
+    color: #211f36;
+    text-align: left;
+    border: 1px solid #d1bd8a;
+    border-radius: 4px;
+    background: #fffaf0;
+}
+
+.feue-token-action-row:hover:not(:disabled) {
+    border-color: #9b2335;
+    background: #fff1cb;
+    box-shadow: 0 0 4px rgba(155, 35, 53, 0.35);
+}
+
+.feue-token-action-row:disabled {
+    opacity: 0.48;
+    cursor: not-allowed;
+}
+
+.feue-token-action-row img {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    border: 1px solid #b89b58;
+    border-radius: 3px;
+}
+
+.feue-token-action-copy {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.15;
+}
+
+.feue-token-action-copy b,
+.feue-token-action-copy small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.feue-token-action-copy small {
+    margin-top: 2px;
+    color: #625d6e;
+    font-size: 10px;
+}
+
+.feue-token-action-row > i {
+    color: #9b2335;
+    text-align: center;
+}
+
+.feue-token-action-empty {
+    margin: 4px;
+    color: #756f78;
+    font-style: italic;
+    font-size: 11px;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 800px) {
     .feue .sheet-header {
@@ -1529,6 +1901,10 @@
 
     .feue .weapon-ranks-grid,
     .feue .details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .feue .main-stat-grid {
         grid-template-columns: 1fr;
     }
 }
@@ -1602,6 +1978,19 @@
 .feue.party-sheet .party-member-controls a:hover { color: #2c4875; }
 .feue.party-sheet .party-notes { margin-top: 12px; }
 .feue.party-sheet .party-notes textarea { width: 100%; }
+.feue.party-sheet .party-convoy { margin-top: 16px; padding-top: 12px; border-top: 1px solid #b8a080; }
+.feue.party-sheet .party-convoy h3 span { font-size: 12px; font-weight: normal; }
+.feue.party-sheet .party-convoy-unit-label { display: flex; align-items: center; gap: 12px; }
+.feue.party-sheet .party-convoy-unit { flex: 1; min-width: 0; }
+.feue.party-sheet .party-convoy-status { font-size: 12px; color: #666; }
+.feue.party-sheet .party-convoy-actions { display: flex; gap: 8px; margin: 8px 0; }
+.feue.party-sheet .party-convoy-list { display: grid; gap: 6px; }
+.feue.party-sheet .party-convoy-item { display: flex; align-items: center; gap: 8px; padding: 6px; border: 1px solid #b8a080; border-radius: 4px; background: #ffffff80; }
+.feue.party-sheet .party-convoy-item-info { flex: 1; min-width: 0; display: grid; }
+.feue.party-sheet .party-convoy-item-info strong { overflow-wrap: anywhere; }
+.feue.party-sheet .party-convoy-item-info span { font-size: 11px; color: #666; }
+.feue.party-sheet .party-convoy-item button { width: auto; flex: 0 0 auto; }
+.feue.party-sheet .party-convoy button:disabled { opacity: .5; cursor: default; }
 
 /* ==================================================================== */
 /* Shop Sheet                                                           */
@@ -1764,3 +2153,62 @@
     gap: 4px;
     font-size: 12px;
 }
+
+/* ===== STAT BREAKDOWN TOOLTIPS ===== */
+#tooltip.feue-breakdown-tooltip { max-width: 340px; padding: 6px 8px; text-align: left; }
+.feue-breakdown { min-width: 190px; font-size: 12px; line-height: 1.35; font-variant-numeric: tabular-nums; }
+.feue-breakdown header { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 3px; margin-bottom: 3px; border-bottom: 1px solid rgba(212, 175, 55, 0.6); font-weight: bold; }
+.feue-breakdown header strong { color: #f3d77a; }
+.feue-breakdown table { width: 100%; margin: 0; border: 0; border-collapse: collapse; background: none; }
+.feue-breakdown td { padding: 1px 0; border: 0; background: none; }
+.feue-breakdown td:last-child { padding-left: 12px; text-align: right; white-space: nowrap; }
+.feue-breakdown tr.base td:last-child { color: #e8e8e8; }
+.feue-breakdown tr.bonus td:last-child { color: #8fdc8f; }
+.feue-breakdown tr.penalty td:last-child { color: #ff9b8f; }
+.feue-breakdown tr.info td { color: #bbbbbb; font-style: italic; }
+.feue-breakdown-section { display: flex; justify-content: space-between; margin-top: 5px; color: #d2c28f; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.04em; }
+.feue-breakdown ul { margin: 2px 0 0; padding-left: 14px; }
+.feue-breakdown li { margin: 1px 0; }
+.feue-breakdown li.active { color: #8fdc8f; }
+.feue-breakdown li.inactive { color: #b9b9b9; }
+.feue-breakdown li small { display: block; color: #a9a9a9; font-size: 10.5px; }
+.feue-breakdown p { margin: 4px 0 0; color: #c8c8c8; font-size: 11px; }
+.feue-breakdown footer { margin-top: 4px; color: #c8c8c8; font-size: 11px; }
+.feue .feue-has-breakdown { cursor: help; }
+.feue .feue-has-breakdown:focus-visible, #feue-character-actions .feue-action-stat:focus-visible, .feue-battle-stats > div:focus-visible { outline: 2px solid var(--feue-secondary); outline-offset: 1px; }
+
+/* ===== SKILL AUTOMATION BADGES ===== */
+.feue .feue-skill-badge { display: inline-block; margin-left: 4px; padding: 0 5px; border-radius: 3px; font-size: 10px; line-height: 15px; vertical-align: middle; cursor: help; color: #fff; background: #6b6b6b; }
+.feue .feue-skill-badge.auto { background: #2f6b3b; }
+.feue .feue-skill-badge.partial { background: #8a6d1d; }
+.feue .feue-skill-badge.manual, .feue .feue-skill-badge.none { background: #6b3a3a; }
+.feue .feue-automation-summary { margin: 0 0 6px; padding: 4px 6px; border-left: 3px solid #6b6b6b; background: rgba(0, 0, 0, 0.04); }
+.feue .feue-automation-summary.auto { border-color: #2f6b3b; }
+.feue .feue-automation-summary.partial { border-color: #8a6d1d; }
+.feue .feue-automation-summary.manual, .feue .feue-automation-summary.none { border-color: #6b3a3a; }
+
+/* ===== BATTALION AREA EDITOR ===== */
+.feue .feue-area-tools { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0 6px; }
+.feue .feue-area-tools button { flex: 0 0 auto; width: auto; padding: 2px 8px; line-height: 20px; }
+.feue .feue-area-tools button.active { background: var(--feue-primary); color: #fff; border-color: var(--feue-secondary); }
+.feue .feue-area-editor { display: inline-grid; gap: 1px; padding: 1px; background: #b7aa86; border: 1px solid var(--feue-border); }
+.feue .feue-area-row { display: flex; gap: 1px; }
+.feue .feue-area-cell { width: 22px; height: 22px; min-height: 0; margin: 0; padding: 0; border: 0; border-radius: 0; background: #fdf8ef; color: #fff; font: bold 12px/22px var(--feue-font-body); cursor: pointer; }
+.feue .feue-area-cell:hover, .feue .feue-area-cell:focus-visible { outline: 2px solid var(--feue-accent); outline-offset: -2px; box-shadow: none; }
+.feue .feue-area-cell.on { background: #1d1d1d; }
+.feue .feue-area-cell.origin { background: var(--feue-accent); }
+.feue .feue-area-editor[data-mode="origin"] .feue-area-cell { cursor: crosshair; }
+.feue-battalion-roll table.feue-battalion-results { width: 100%; font-size: 12px; }
+
+/* Alternate-rule panels outside the GBA character sheet theme, and item-sheet rule fieldsets. */
+.feue .feue-alt-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 4px 0; }
+.feue .feue-alt-row input[type="number"] { width: 52px; }
+.feue .feue-alt-option { display: flex; align-items: center; gap: 6px; }
+.feue .feue-revival-stones .fa-gem.lit { color: #c2307e; }
+.feue :is(.feue-mount-config, .feue-revival-gate, .feue-class-change-config) { margin: 8px 0; padding: 6px 8px; border: 1px solid rgba(0, 0, 0, 0.15); border-radius: 4px; }
+.feue .feue-class-change-classes { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0; }
+.feue .feue-class-change-tag { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border: 1px solid #b8a080; border-radius: 10px; background: #ffffff80; }
+.feue .feue-class-change-tag a { opacity: .7; }
+.feue .feue-class-change-entry { display: flex; gap: 6px; }
+.feue .feue-class-change-entry input { flex: 1; min-width: 0; }
+.feue .feue-class-change-entry button { flex: 0 0 auto; width: auto; }

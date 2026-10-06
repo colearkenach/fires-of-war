@@ -1,0 +1,734 @@
+/* Shared GBA palette. Party, shop and chat styling stays independent. */
+.feue.character, .feue.sheet.item {
+    --gba-ink: #080f24;
+    --gba-navy: #101c3b;
+    --gba-panel: #354b88;
+    --gba-gold: #fff0b0;
+    --gba-cream: #f2e8bc;
+    --gba-blue: #e6f6ff;
+    --gba-muted: #e0e7f5;
+    --gba-panel-background: repeating-linear-gradient(0deg, #ffffff02 0 1px, transparent 1px 3px),
+        linear-gradient(105deg, var(--gba-panel), #29396e);
+    --gba-panel-shadow: inset 0 0 0 1px #142454, inset 0 0 0 2px #919eba,
+        0 0 0 1px #111b3a, 2px 3px 0 #0d193b80;
+    --feue-primary: var(--gba-gold);
+    --feue-secondary: var(--gba-gold);
+    --feue-accent: var(--gba-blue);
+    --feue-text: #fffbed;
+    --feue-label: var(--gba-gold);
+    --feue-border: #e3d7a8;
+    --feue-bg: #17274e;
+    --feue-font-body: "NocturneSerif-Regular", "Times New Roman", serif;
+    --feue-font-header: var(--feue-font-body);
+    --gba-font-readable: "Trebuchet MS", Arial, sans-serif;
+    border-radius: 3px;
+}
+
+.feue.character .window-header, .feue.sheet.item .window-header {
+    background: #101a32;
+    border-bottom: 1px solid #8f956e;
+    color: #f2e8bc;
+}
+
+.feue.character .window-content {
+    container: feue-character / inline-size;
+    overflow: hidden;
+    padding: 0;
+}
+
+.feue.character form.gba-character {
+    display: grid;
+    grid-template-columns: 214px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 0 12px;
+    height: 100%;
+    min-height: 0;
+    padding: 12px;
+    overflow: hidden;
+    color: var(--feue-text);
+    background: repeating-linear-gradient(0deg, #ffffff03 0 1px, transparent 1px 3px),
+        linear-gradient(125deg, #314d7d, #172449 65%);
+    font: 20px/1.2 var(--feue-font-body);
+    text-shadow: 1px 1px 0 var(--gba-ink);
+    color-scheme: dark;
+}
+
+.gba-character *, .gba-character *::before, .gba-character *::after { box-sizing: border-box; }
+.gba-character :is(h1, h2, h3, h4, p) { line-height: 1.2; }
+.gba-character :is(h1, h2, h3, h4) { font-weight: normal; letter-spacing: 0; }
+.gba-character :is(input, select, textarea, button) {
+    font-family: var(--feue-font-body);
+    font-size: 20px;
+    color: #fff8dc;
+    border-radius: 0;
+    text-shadow: 1px 1px 0 var(--gba-ink);
+}
+.gba-character :is(input, select, textarea) {
+    background: #172b60;
+    border: 1px solid #8ba6d4;
+    padding: 2px 6px;
+    min-width: 0;
+    height: 30px;
+    box-shadow: inset 1px 1px 0 #0c1739;
+}
+.gba-character input[type="number"] { text-align: center; }
+.gba-character input:disabled, .gba-character select:disabled { opacity: 1; color: var(--gba-blue); }
+.gba-character :is(button, .item-control) {
+    width: auto;
+    min-height: 28px;
+    margin: 0;
+    padding: 3px 8px;
+    line-height: 1.1;
+    background: #233d79;
+    border: 1px solid #aaa979;
+    box-shadow: inset 1px 1px 0 #6b80b5, 1px 1px 0 #111c42;
+    color: var(--gba-gold);
+    cursor: pointer;
+    text-transform: none;
+    letter-spacing: 0;
+    border-radius: 0;
+}
+.gba-character :is(button, a):hover {
+    color: #fff8cf;
+    text-shadow: 1px 2px 0 #111c42;
+    background-color: #536daf;
+}
+.gba-character :is(button, a, input, select, textarea):focus-visible {
+    outline: 2px solid #fff1a1;
+    outline-offset: 2px;
+    box-shadow: none;
+}
+.gba-character a { color: var(--gba-gold); }
+.gba-character i { font-size: 12px; }
+.gba-character .flexrow { flex-direction: row; justify-content: flex-start; gap: 8px; }
+.gba-character strong, .gba-character b { font-weight: normal; }
+
+/* The portrait and vital statistics stay on screen while the pages scroll. */
+.gba-character .unit-sidebar {
+    grid-row: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 5px 8px 10px;
+    border: 3px solid var(--gba-cream);
+    box-shadow: inset 0 0 0 2px #8a906a, 0 0 0 1px #0e1a36;
+    background: repeating-linear-gradient(0deg, #ffffff02 0 1px, transparent 1px 3px),
+        linear-gradient(#314579, #223361);
+}
+.gba-character .unit-portrait-frame {
+    position: relative;
+    flex: 0 0 auto;
+    height: 224px;
+    margin: 0 -3px;
+    border: 2px solid #b8b689;
+    background: repeating-linear-gradient(135deg, #ffffff06 0 2px, transparent 2px 6px),
+        radial-gradient(ellipse at 50% 20%, #adb6a2, #788885 58%, #52626d);
+    box-shadow: inset 0 0 0 2px #343c4b;
+    overflow: hidden;
+}
+.gba-character .unit-portrait-frame .profile-img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: contain;
+    object-position: center bottom;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    image-rendering: pixelated;
+    cursor: pointer;
+}
+.gba-character .unit-name {
+    position: relative;
+    margin: -2px -8px 10px;
+    border: solid #92895b;
+    border-width: 2px 0;
+    padding: 3px 9px;
+    background: linear-gradient(#fff4ca, #d8c990);
+    box-shadow: inset 0 1px #fffbe1, 0 2px #152345;
+    font-size: 28px;
+    line-height: 1;
+}
+.gba-character .unit-name input {
+    width: 100%;
+    height: 34px;
+    border: 1px solid transparent;
+    background: transparent;
+    box-shadow: none;
+    padding: 0 3px;
+    color: #23334c;
+    font-size: 28px;
+    text-align: center;
+    text-shadow: 1px 1px #fff8d9;
+}
+.gba-character .unit-name input:hover { border-color: #948866; }
+.gba-character .unit-identity { padding: 0 2px 12px; text-align: center; }
+.gba-character .unit-class { font-size: 25px; color: #fff4be; overflow-wrap: anywhere; }
+.gba-character .unit-class-type { font-size: 17px; color: var(--gba-muted); margin-top: 3px; }
+.gba-character .unit-level-line, .gba-character .unit-vital-line, .gba-character .unit-affinity {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+}
+.gba-character .gba-label { color: var(--gba-gold); font-size: 23px; }
+.gba-character .unit-level-line > strong { font-size: 28px; color: var(--gba-blue); }
+.gba-character .unit-total { margin-left: auto; font-size: 17px; color: var(--gba-muted); }
+.gba-character .unit-total b { margin-left: 4px; color: #fff8dc; }
+.gba-character .unit-vital { margin: 7px 0; }
+.gba-character .unit-vital-line > .gba-label { flex: 1; }
+.gba-character .hp-fields { gap: 4px; }
+.gba-character .hp-fields :is(.hp-current, .hp-max) { font-size: 25px; color: var(--gba-blue); }
+.gba-character .hp-fields .hp-current { width: 52px; }
+.gba-character .hp-fields span { color: var(--gba-cream); }
+.gba-character .unit-vital-line > input { width: 52px; color: var(--gba-blue); }
+.gba-character .award-xp { padding: 3px 5px; }
+.gba-character .unit-level-actions { display: flex; gap: 6px; margin: 9px 0 10px; }
+.gba-character .level-up { flex: 1; max-width: none; font-size: 20px; }
+.gba-character .level-reset { min-width: 28px; padding: 3px 6px; }
+.gba-character .unit-affinity { border-top: 1px solid #b9c1c766; justify-content: space-between; }
+.gba-character .unit-affinity .gba-label { font-size: 19px; }
+.gba-character .unit-footer { margin-top: auto; padding-top: 16px; text-align: center; color: #b6c3df; font-size: 16px; }
+.gba-character .unit-footer span { color: #d2c89b; padding: 0 7px; }
+
+/* Small segmented bars, drawn with CSS so they remain crisp at any size. */
+.gba-character .gba-meter {
+    height: 10px;
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid #122146;
+    background: #182857;
+    box-shadow: 0 1px 0 #7c93c7, inset 0 1px 0 #091632;
+}
+.gba-character .gba-meter > span {
+    display: block;
+    height: 100%;
+    background: repeating-linear-gradient(90deg, transparent 0 7px, #153b555e 7px 8px),
+        linear-gradient(#e3ffca 0 25%, #93d991 25% 75%, #4a9b85 75%);
+}
+.gba-character .exp-meter > span { background: linear-gradient(#fff7ba 0 25%, #ecd474 25% 75%, #a58f4f 75%); }
+
+/* Page chrome and the original Foundry tab controller. */
+.gba-character .sheet-body {
+    grid-column: 2;
+    min-width: 0;
+    min-height: 0;
+    padding: 0 5px 6px 1px;
+    overflow: auto;
+    background: transparent;
+    scrollbar-width: thin;
+    scrollbar-color: #c6c397 #17254d;
+}
+.gba-character .sheet-body > .tab { min-height: 100%; }
+.gba-character .gba-page-header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    margin-bottom: 12px;
+    padding: 3px 5px;
+    border-bottom: 2px solid #d7d3a0;
+    background: #101c3b;
+    box-shadow: 0 2px #0b1430;
+}
+.gba-character .gba-page-header h2 { flex: 1; margin: 0; border: 0; color: #fff5bd; font-size: 28px; }
+.gba-character .gba-page-number { white-space: nowrap; color: #fff7d6; font-size: 22px; }
+.gba-character .gba-page-number > span { color: #afbedf; }
+.gba-character .sheet-page-step { border: 0; box-shadow: none; background: transparent; padding: 4px; font-size: 18px; }
+.gba-character .sheet-tabs {
+    grid-column: 2;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 3px;
+    margin: 6px 4px 0 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    min-height: 46px;
+    max-height: none;
+}
+.gba-character .sheet-tabs .item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1px;
+    padding: 5px 2px;
+    margin: 0;
+    border: 1px solid #8395b5;
+    border-radius: 0;
+    background: #20345c;
+    font-size: 18px;
+    line-height: 1;
+    text-transform: none;
+    color: #d1dbef;
+}
+.gba-character .sheet-tabs .tab-number { font-size: 14px; color: #a9b9d4; }
+.gba-character .sheet-tabs .item.active { color: #fff3ba; background: #47649b; border-color: #fff1b6; box-shadow: inset 0 -3px #eee0a4; }
+.gba-character .sheet-tabs .item.active .tab-number { color: #fff3ba; }
+
+/* Beveled status panels replace the parchment cards on every character page. */
+.gba-character :is(.attributes, .growth-rates, .weapon-ranks, .battalion-ranks,
+    .combat-stats, .weapons-section, .items-section, .classes-section, .skills-section,
+    .spells-section, .combat-arts-section, .battalion-section, .inventory-limit,
+    .roleplay-traits-section, .personal-details, .biography-text, .appearance-text,
+    .movement, .details, .fatigue-section, .status-effects-section, .supports-section,
+    .crests-section, .reclass-section, .holy-blood-section) {
+    min-width: 0;
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    border: 3px solid var(--gba-cream);
+    border-radius: 2px;
+    background: var(--gba-panel-background);
+    box-shadow: var(--gba-panel-shadow);
+}
+.gba-character h3 { color: var(--gba-gold); font-size: 22px; margin: 0 0 8px; }
+.gba-character :is(.attributes, .growth-rates, .movement, .details) > h3 {
+    text-align: left;
+    border-bottom: 1px solid #bac6e070;
+    padding: 0 0 6px;
+    margin: 0 0 6px;
+}
+.gba-character .section-header { gap: 8px; flex-wrap: wrap; border-bottom: 1px solid #bac6e070; padding-bottom: 6px; margin-bottom: 7px; }
+.gba-character .section-header h3 { border: 0; margin: 0; padding: 0; text-align: left; }
+.gba-character .main-stat-grid { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 12px; }
+.gba-character :is(.attributes-grid, .growth-rates-grid) { gap: 0; }
+.gba-character .attribute {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr) 82px;
+    gap: 6px;
+    min-height: 29px;
+    padding: 2px 0;
+    border: 0;
+    background: none;
+}
+.gba-character .attribute > .attribute-label { width: auto; padding: 0; color: var(--gba-gold); font-weight: normal; font-size: 22px; text-transform: none; }
+.gba-character .attribute-value { justify-content: flex-end; gap: 4px; margin: 0; font-size: 25px; line-height: 1; color: var(--gba-blue); }
+.gba-character .attribute-value span { font-size: 17px; color: #d5dcef; }
+.gba-character .attribute.at-cap :is(strong, .attribute-label, .attribute-value > span) { color: #bdff98 !important; font-weight: normal; }
+.gba-character .stat-meter { height: 9px; }
+.gba-character .stat-meter > span { background: repeating-linear-gradient(90deg, transparent 0 4px, #153b5577 4px 5px), linear-gradient(#e1f5ff 0 30%, #93c5f8 30% 70%, #658dd8 70%); }
+.gba-character .at-cap .stat-meter > span { background: linear-gradient(#ecffcc, #a5e681 40% 70%, #5fa765 70%); }
+.gba-character .growth-rate { justify-content: space-between; min-height: 26px; padding: 1px 2px; border: 0; background: none; }
+.gba-character .growth-label { color: var(--gba-gold); font-size: 21px; font-weight: normal; text-transform: none; }
+.gba-character .growth-value { color: var(--gba-blue); font-size: 24px; line-height: 1; }
+.gba-character .growth-value small { margin-left: 3px; font-size: 17px; color: #d5dcef; }
+.gba-character .unit-details-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 12px; }
+.gba-character .resource { min-width: 0; margin: 2px 0; flex-wrap: nowrap; }
+.gba-character :is(.movement, .details) .resource { justify-content: space-between; padding: 2px 0; }
+.gba-character :is(.movement, .details) .resource label { font-size: 19px; font-weight: normal; color: var(--gba-gold); }
+.gba-character :is(.movement, .details) .resource :is(input, select) { width: 64px; height: 28px; flex: 0 0 64px; font-size: 21px; background: #172b60; color: var(--gba-blue); padding: 1px 4px; }
+.gba-character .details .resource select { width: auto; flex: 1; max-width: 140px; }
+.gba-character .details .resource > label { display: none; }
+
+/* Inventory and abilities use readable rows, with all original action hooks. */
+.gba-character .combat-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.gba-character .combat-stat { display: flex; justify-content: space-between; align-items: center; gap: 6px; padding: 5px; border: 0; border-radius: 0; background: #20356566; min-width: 0; }
+.gba-character .combat-stat label { margin: 0; color: var(--gba-gold); text-transform: none; font-size: 18px; font-weight: normal; letter-spacing: 0; text-align: left; }
+.gba-character .computed-value { font-size: 25px; letter-spacing: 0; color: var(--gba-blue); text-shadow: 1px 1px var(--gba-ink); }
+.gba-character .item { border: 0; border-bottom: 1px solid #adc0e64d; border-radius: 0; padding: 8px 2px; margin: 0; background: transparent; min-width: 0; }
+.gba-character .item:hover { background: #bfd9ff14; }
+.gba-character .item-image { flex: 0 0 32px; }
+.gba-character .item-image img { display: block; width: 32px; height: 32px; object-fit: contain; border: 1px solid #bdc6c3; border-radius: 0; background: #16284b66; image-rendering: pixelated; }
+.gba-character .item-name { width: auto; min-width: 0; font-size: 23px; font-weight: normal; margin: 0; overflow-wrap: anywhere; color: #fff8dc; }
+.gba-character .weapon-name-block { margin: 0; min-width: 130px; }
+.gba-character :is(.weapon-stats, .item-controls) { gap: 4px; margin: 0; }
+.gba-character .weapon-stats { flex: 1 1 190px; }
+.gba-character .weapon-stats span { padding: 1px 4px; border-radius: 0; background: #182d5c77; font-size: 18px; color: var(--gba-blue); }
+.gba-character .item-controls { margin-left: auto; flex: 0 0 auto; align-items: center; }
+.gba-character .item-control { display: inline-flex; align-items: center; justify-content: center; font-size: 17px; min-height: 26px; padding: 4px 6px; }
+.gba-character .item-create { font-size: 18px; padding: 3px 7px; }
+.gba-character .equipped-marker { display: inline-block; padding: 0 4px; color: #193b4b; background: #baffaa; font-size: 17px; text-shadow: none; }
+.gba-character .weapon-rank-warning { border-left: 3px solid #f4b0a0; padding-left: 6px; }
+.gba-character :is(.broken-tag, .rank-requirement.not-usable, .fatigue-warning) { color: #ffd4b4; }
+.gba-character :is(.rank-requirement, .weapon-uses, .item-uses, .skill-type, .class-type) {
+    font: 14px/1.4 var(--gba-font-readable);
+    color: var(--gba-muted);
+    text-shadow: none;
+}
+/* Solid letterforms keep multi-line rules legible beside the pixel headings. */
+.gba-character :is(.skill-activation, .spell-details, .combat-art-details) {
+    font: 16px/1.5 var(--gba-font-readable);
+    color: var(--feue-text);
+    text-shadow: none;
+    margin: 5px 0 0;
+    overflow-wrap: anywhere;
+}
+.gba-character :is(.skill, .spell, .combat-art, .class).item { padding-block: 12px; }
+.gba-character :is(.skill-info, .class-info, .spell-info, .combat-art-info) { flex: 1; min-width: 0; }
+.gba-character .ability-grid { display: grid; grid-template-columns: 1fr; gap: 0; }
+.gba-character :is(.classes-section, .skills-section) { margin-right: 0; }
+.gba-character :is(.item-quantity, .item-weight) { color: var(--gba-blue); font-size: 20px; }
+
+/* Weapon levels and support partners share a dedicated status page. */
+.gba-character .weapon-ranks-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 12px; }
+.gba-character .weapon-rank { flex-wrap: nowrap; padding: 4px; border: 0; background: #20356555; border-radius: 0; }
+.gba-character .weapon-label { flex: 1; min-width: 0; text-align: left; font-size: 22px; font-weight: normal; }
+.gba-character .weapon-rank select { width: 56px; flex: 0 0 56px; max-width: none; font-size: 23px; color: #c1ff8f; background: #21396d; border: 1px solid #a5b4d1; }
+.gba-character .wexp-display { font-size: 20px; color: var(--gba-blue); font-weight: normal; }
+.gba-character .other-weapons-section { border-top-color: #bac6e070; }
+.gba-character .other-weapons-toggle { font-size: 20px; font-weight: normal; }
+.gba-character .other-weapons-content .weapon-rank { opacity: 1; }
+.gba-character .weapon-mastery-section { background: #20356555; border-radius: 0; font-size: 18px; }
+.gba-character .weapon-mastery-section h4 { font-size: 20px; }
+.gba-character :is(.support-entry, .status-effect, .crest-entry, .alt-class-entry, .holy-blood-entry) { border: 0; border-bottom: 1px solid #adc0e64d; border-radius: 0; background: #20356555; padding: 6px; gap: 8px; }
+.gba-character :is(.support-name, .effect-name) { font-weight: normal; color: #c6ffa6; font-size: 23px; }
+.gba-character .support-affinity { font-size: 18px; color: var(--gba-muted); }
+.gba-character .support-bonus { font-size: 17px; color: var(--gba-blue); }
+.gba-character .support-rank-select { width: 50px; color: #c6ffa6; }
+.gba-character .effect-duration { font-size: 18px; }
+.gba-character .fatigue-section .section-header { max-height: none; }
+.gba-character .fatigue-display { color: var(--gba-blue); }
+.gba-character .fatigue-section.fatigued { border-color: #ffd4b4; }
+.gba-character :is(.status-effect-remove, .support-remove, .crest-remove, .crest-edit-reductions, .alt-class-remove, .holy-blood-remove) { color: #ffd4b4; }
+
+/* Long-form character information keeps a quieter reading surface. */
+.gba-character :is(.empty-note, .limit-note, .section-hint, .inventory-limit p,
+    .no-proficiency-note, .roleplay-traits-empty, .crest-empty, .alt-class-empty, .holy-blood-empty) {
+    font: 16px/1.5 var(--gba-font-readable);
+    color: var(--gba-muted);
+    text-shadow: none;
+    margin: 4px 0;
+    border: 0;
+    background: none;
+}
+.gba-character .roleplay-trait-source { background: #20356555; border: 1px solid #adc0e64d; border-radius: 0; }
+.gba-character .roleplay-trait-source-header { flex-wrap: wrap; gap: 6px; }
+.gba-character .roleplay-trait-source h4 { color: var(--gba-gold); font-size: 21px; }
+.gba-character :is(.roleplay-traits-header button, .configure-roleplay-traits, .roll-roleplay-trait) { background: #233d79; color: var(--gba-gold); font-family: var(--feue-font-body); font-size: 18px; border-radius: 0; }
+.gba-character .roll-roleplay-trait small { color: var(--gba-blue); }
+.gba-character .personal-trait-row { flex-wrap: wrap; }
+.gba-character .personal-trait-row label { color: var(--gba-gold); font-size: 20px; }
+.gba-character .personal-trait-row input { min-width: 180px; color: #fff8dc; background: #172b60; }
+.gba-character .details-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; }
+.gba-character .detail label { font-size: 19px; color: var(--gba-gold); font-weight: normal; }
+.gba-character .detail :is(input, select) { width: 100%; height: 30px; font-size: 20px; background: #172b60; color: #fff8dc; border: 1px solid #8ba6d4; }
+.gba-character :is(.biography-text, .appearance-text) textarea { width: 100%; height: auto; min-height: 140px; resize: vertical; background: #172b60; color: #fff8dc; font: 16px/1.5 "Trebuchet MS", sans-serif; text-shadow: none; border: 1px solid #8ba6d4; }
+.gba-character :is(.crest-entry input[type="text"], .crest-entry select, .holy-blood-entry select, .alt-class-name, .holy-blood-weapon) { font-size: 18px; color: #fff8dc; }
+.gba-character .alt-class-type { color: var(--gba-muted); }
+.gba-character .holy-blood-entry { flex-wrap: wrap; }
+.gba-character .holy-blood-entry select { width: auto; min-width: 0; flex: 1 1 100px; }
+.gba-character .holy-blood-weapon { min-width: 0; overflow-wrap: anywhere; }
+
+/* Reserve the decorative font for names and headings; controls and supporting
+   text use solid glyphs without shadows or synthetic outlines. */
+.feue.character .gba-character :is(button, .item-control, input, select, textarea,
+    .sheet-tabs .item, .unit-class-type, .unit-total, .unit-footer,
+    .support-affinity, .support-bonus, .effect-duration, .weapon-mastery-section,
+    .personal-trait-row label, .alt-class-type) {
+    font-family: var(--gba-font-readable);
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.4;
+    text-shadow: none;
+    letter-spacing: normal;
+}
+.feue.character .gba-character :is(input, select, textarea) { font-size: 16px; }
+.feue.character .gba-character .unit-name input {
+    font-family: var(--feue-font-body);
+    font-size: 28px;
+}
+.feue.character .gba-character :is(input, textarea)::placeholder {
+    color: var(--gba-muted);
+    opacity: 1;
+    text-shadow: none;
+}
+.feue.character .gba-character :is(button, .item-control) {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    height: auto;
+}
+.feue.character .gba-character :is(button, .item-control):hover {
+    background: #536daf;
+    text-shadow: none;
+}
+
+/* Respond to the sheet window, independently of the size of the game canvas. */
+@container feue-character (max-width: 820px) {
+    .feue.character form.gba-character { grid-template-columns: 180px minmax(0, 1fr); padding: 9px; gap: 0 9px; }
+    .gba-character .unit-portrait-frame { height: 190px; }
+    .gba-character .attribute { grid-template-columns: 32px minmax(0, 1fr) 60px; }
+    .gba-character .sheet-tabs .item { font-size: 16px; }
+    .gba-character .combat-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .gba-character .unit-details-grid { grid-template-columns: 1fr; gap: 0; }
+}
+@container feue-character (max-width: 620px) {
+    .feue.character form.gba-character { grid-template-columns: 145px minmax(0, 1fr); padding: 6px; gap: 0 7px; }
+    .gba-character .unit-sidebar { padding-inline: 5px; }
+    .gba-character .unit-portrait-frame { height: 152px; }
+    .gba-character .unit-name { margin-inline: -5px; }
+    .feue.character .gba-character .unit-name input { font-size: 23px; }
+    .gba-character .unit-class { font-size: 22px; }
+    .gba-character .unit-total { font-size: 15px; }
+    .gba-character .unit-vital-line { gap: 4px; }
+    .gba-character .gba-label { font-size: 20px; }
+    .gba-character .hp-fields .hp-current, .gba-character .unit-vital-line > input { width: 42px; }
+    .gba-character .unit-footer { font-size: 14px; }
+    .gba-character .unit-footer span { padding: 0 2px; }
+    .gba-character .main-stat-grid, .gba-character .weapon-ranks-grid, .gba-character .details-grid { grid-template-columns: 1fr; }
+    .gba-character .attribute { grid-template-columns: 38px minmax(0, 1fr) 72px; }
+    .gba-character .stat-meter { grid-column: auto; height: 8px; margin: 0; }
+    .gba-character .sheet-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .gba-character .roleplay-trait-list { grid-template-columns: 1fr; }
+    .gba-character .personal-trait-row { grid-template-columns: minmax(0, 1fr); }
+    .gba-character .personal-trait-row input { min-width: 0; width: 100%; }
+    .gba-character .gba-page-header { gap: 4px; }
+    .gba-character .gba-page-header h2 { font-size: 23px; }
+    .gba-character .gba-page-number { font-size: 18px; }
+    .gba-character .sheet-page-step { font-size: 14px; padding: 3px; }
+}
+
+/* Item records: matching status frames with plain text in dense editing fields. */
+.feue.sheet.item .window-content {
+    container: feue-item / inline-size;
+    overflow: hidden;
+    padding: 0;
+}
+.feue.sheet.item form.gba-item {
+    height: 100%;
+    min-height: 0;
+    padding: 10px;
+    gap: 10px;
+    overflow: hidden;
+    color: var(--feue-text);
+    background: linear-gradient(125deg, #293f6d, #172449 65%);
+    font: 14px/1.4 "Trebuchet MS", sans-serif;
+    text-shadow: none;
+    color-scheme: dark;
+}
+.feue.sheet.item .gba-item :is(h1, h2, h3, h4) {
+    color: var(--gba-gold);
+    font-family: var(--feue-font-body);
+    font-weight: normal;
+    letter-spacing: 0;
+    text-shadow: 1px 1px 0 var(--gba-ink);
+}
+.feue.sheet.item .gba-item .sheet-header {
+    flex: 0 0 auto;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 14px;
+    min-height: 90px;
+    max-height: none;
+    padding: 10px 12px;
+    border: 3px solid var(--gba-cream);
+    background: var(--gba-panel-background);
+    box-shadow: var(--gba-panel-shadow);
+    text-align: left;
+}
+.feue.sheet.item .gba-item .item-img {
+    flex: 0 0 64px;
+    width: 64px;
+    height: 64px;
+    border: 2px solid #b8b689;
+    border-radius: 0;
+    box-shadow: 0 0 0 1px #101c3b;
+    background: #17274e;
+    object-fit: contain;
+    image-rendering: pixelated;
+    cursor: pointer;
+}
+.feue.sheet.item .gba-item .header-fields { min-width: 0; margin: 0; gap: 3px; }
+.feue.sheet.item .gba-item .item-kind { color: var(--gba-muted); font: 18px/1.2 var(--feue-font-body); }
+.feue.sheet.item .gba-item .sheet-header .item-name { width: 100%; margin: 0; line-height: 1; }
+.feue.sheet.item .gba-item .sheet-header .item-name input {
+    width: 100%;
+    height: 37px;
+    padding: 2px 7px;
+    border: 1px solid #dfcf94;
+    border-radius: 0;
+    background: #f2e8bc;
+    color: #101c3b;
+    font: 27px/1 var(--feue-font-body);
+    text-shadow: none;
+    box-shadow: inset 1px 1px #fff9de;
+}
+.feue.sheet.item .gba-item .sheet-tabs {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 6px;
+    padding: 0;
+    margin: 0;
+    min-height: 38px;
+    max-height: none;
+    border: 0;
+    background: transparent;
+}
+.feue.sheet.item .gba-item .sheet-tabs .item {
+    flex: 1;
+    margin: 0;
+    padding: 7px;
+    border: 1px solid #9faac2;
+    border-radius: 0;
+    background: #18294e;
+    color: var(--gba-muted);
+    font: 22px/1 var(--feue-font-body);
+    text-transform: none;
+    text-shadow: 1px 1px var(--gba-ink);
+}
+.feue.sheet.item .gba-item .sheet-tabs .item.active {
+    border-color: var(--gba-cream);
+    background: #344c80;
+    color: var(--gba-gold);
+    box-shadow: inset 0 -3px #eee0a4;
+}
+.feue.sheet.item .gba-item .sheet-body {
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+    overflow: auto;
+    padding: 1px 5px 5px 1px;
+    background: transparent;
+    scrollbar-width: thin;
+    scrollbar-color: #c6c397 #17254d;
+}
+.feue.sheet.item .gba-item .sheet-body > .tab {
+    min-width: 0;
+    margin: 0;
+    padding: 12px;
+    border: 3px solid var(--gba-cream);
+    border-radius: 2px;
+    background: var(--gba-panel-background);
+    box-shadow: var(--gba-panel-shadow);
+}
+.feue.sheet.item .gba-item .form-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    margin: 8px 0 12px;
+}
+.feue.sheet.item .gba-item .form-group {
+    flex: 1 1 0;
+    min-width: 0;
+    gap: 5px;
+    text-align: left;
+}
+.feue.sheet.item .gba-item .form-row > .form-group { flex-basis: 70px; }
+.feue.sheet.item .gba-item :is(label, legend) {
+    color: var(--gba-gold);
+    font: 20px/1.2 var(--feue-font-body);
+    text-shadow: 1px 1px var(--gba-ink);
+}
+.feue.sheet.item .gba-item :is(input, select, textarea) {
+    min-width: 0;
+    width: 100%;
+    height: 32px;
+    padding: 4px 7px;
+    border: 1px solid #99accf;
+    border-radius: 0;
+    background: #12234a;
+    color: var(--gba-blue);
+    font: 14px/1.4 "Trebuchet MS", sans-serif;
+    text-shadow: none;
+    box-shadow: inset 1px 1px 0 #080f24;
+}
+.feue.sheet.item .gba-item input[type="number"] { font-size: 16px; font-variant-numeric: tabular-nums; text-align: center; }
+.feue.sheet.item .gba-item :is(input, select):disabled { opacity: 1; color: var(--gba-muted); }
+.feue.sheet.item .gba-item :is(input, textarea)::placeholder { color: #b4c3df; opacity: 1; }
+.feue.sheet.item .gba-item textarea { height: auto; min-height: 85px; max-width: 100%; resize: vertical; color: #f8f9ff; line-height: 1.5; }
+.feue.sheet.item .gba-item textarea[name="system.description"] { min-height: 150px; }
+.feue.sheet.item .gba-item input[type="checkbox"] {
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    accent-color: var(--gba-gold);
+    --checkbox-background-color: #c5d3ed;
+    --checkbox-checked-color: #fff0b0;
+    --checkbox-checkmark-color: #12234a;
+}
+.feue.sheet.item .gba-item label:has(input[type="checkbox"]) { display: inline-flex; align-items: center; gap: 7px; }
+.feue.sheet.item .gba-item .uses-group input { width: 62px; }
+.feue.sheet.item .gba-item .uses-group { justify-content: flex-start; }
+.feue.sheet.item .gba-item h3 { margin: 0 0 5px; font-size: 23px; }
+.feue.sheet.item .gba-item :is(.bonus-header, .item-section-heading, .class-roleplay-traits-header) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #b4c3df66;
+    padding-bottom: 6px;
+}
+.feue.sheet.item .gba-item .bonus-header h3 { margin: 0; }
+.feue.sheet.item .gba-item .feue-bonus-section { margin-top: 14px; padding: 10px; border: 1px solid #879bc3; background: #15284c80; }
+.feue.sheet.item .gba-item .feue-bonus-section.collapsed .bonus-header { border-bottom: 0; padding-bottom: 0; margin-bottom: 0; }
+.feue.sheet.item .gba-item .feue-bonus-section.collapsed .form-row:not(:has(.form-group:not(.bonus-zero))) { display: none; }
+.feue.sheet.item .gba-item :is(.bonus-toggle, .promo-add-root, .promo-paste-root) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 8px;
+    border: 1px solid #d5cd9d;
+    border-radius: 0;
+    background: #213763;
+    color: var(--gba-gold);
+    font: 18px/1 var(--feue-font-body);
+    text-shadow: 1px 1px var(--gba-ink);
+    cursor: pointer;
+}
+.feue.sheet.item .gba-item a { color: var(--gba-gold); }
+.feue.sheet.item .gba-item a:hover { background-color: #425d94; color: #fffbed; text-shadow: none; }
+.feue.sheet.item .gba-item :is(a, button, input, select, textarea):focus-visible { outline: 2px solid var(--gba-gold); outline-offset: 2px; }
+.feue.sheet.item .gba-item :is(.item-hint, .class-skills-empty, .class-roleplay-traits-header span) {
+    margin: 4px 0;
+    color: var(--gba-muted);
+    font: 13px/1.45 "Trebuchet MS", sans-serif;
+    text-shadow: none;
+}
+.feue.sheet.item .gba-item hr { border: 0; border-top: 1px solid #b4c3df66; margin: 14px 0; }
+.feue.sheet.item .gba-item .item-activation { margin: 12px 0; padding: 10px; border: 1px solid #99accf; border-radius: 0; }
+.feue.sheet.item .gba-item .item-activation .hint { color: #fff; font: 13px/1.45 "Trebuchet MS", sans-serif; text-shadow: none; }
+.feue.sheet.item .gba-item .weapon-props-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px 12px; margin: 8px 0; }
+.feue.sheet.item .gba-item .weapon-props-grid label { white-space: normal; }
+.feue.sheet.item .gba-item .weapon-slayer-types { margin: 8px 0; padding: 8px; background: #15284c80; border: 1px solid #879bc3; border-radius: 0; }
+.feue.sheet.item .gba-item :is(.unit-types, .weapon-proficiencies) {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px 12px;
+    margin: 8px 0 12px;
+}
+.feue.sheet.item .gba-item :is(.unit-types, .weapon-proficiencies) h3 { grid-column: 1 / -1; }
+.feue.sheet.item .gba-item :is(.class-skills-list, #promotion-tree-container) { min-height: 40px; padding: 8px; border: 1px dashed #99accf; border-radius: 0; background: #15284c80; }
+.feue.sheet.item .gba-item .class-skills-list { display: block; }
+.feue.sheet.item .gba-item .class-skill-entry { border-color: #99accf66; flex-wrap: wrap; }
+.feue.sheet.item .gba-item .class-skill-name { min-width: 0; overflow-wrap: anywhere; color: var(--feue-text); font-size: 14px; }
+.feue.sheet.item .gba-item .class-skill-level { width: 85px; }
+.feue.sheet.item .gba-item .class-skill-remove { color: #ffd4b4; }
+.feue.sheet.item .gba-item .class-roleplay-traits-grid { font-size: 13px; }
+.feue.sheet.item .gba-item .promotion-heading h3 { flex-basis: 100%; }
+.feue.sheet.item .gba-item .promo-tree-list { margin-left: 7px; padding-left: 8px; border-color: #99accf; }
+.feue.sheet.item .gba-item .promo-tree-row { flex-wrap: wrap; gap: 8px; border-radius: 0; background: #213763; border-color: #879bc3; }
+.feue.sheet.item .gba-item .promo-tree-label { flex: 1 1 130px; min-width: 0; color: var(--feue-text); overflow-wrap: anywhere; }
+.feue.sheet.item .gba-item .promo-tree-type { font-size: 12px; opacity: 1; color: var(--gba-muted); }
+.feue.sheet.item .gba-item .promo-tree-check { font-size: 12px; color: #c6ffa6; }
+.feue.sheet.item .gba-item .promo-tree-node.is-selected > .promo-tree-row { background: #254969; border-color: #b2e9a3; }
+.feue.sheet.item .gba-item :is(.promo-edit, .promo-copy, .promo-delete, .promo-add-sub, .promo-paste-sub) { padding: 4px; cursor: pointer; }
+.feue.sheet.item .gba-item .promo-delete { color: #ffd4b4; }
+@container feue-item (max-width: 480px) {
+    .feue.sheet.item form.gba-item { padding: 7px; gap: 7px; }
+    .feue.sheet.item .gba-item .sheet-header { gap: 10px; padding: 8px; }
+    .feue.sheet.item .gba-item .sheet-header .item-name input { font-size: 23px; }
+    .feue.sheet.item .gba-item .sheet-body > .tab { padding: 9px; }
+    .feue.sheet.item .gba-item :is(.unit-types, .weapon-proficiencies, .weapon-props-grid) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .feue.sheet.item .gba-item .form-row > .form-group { flex-basis: 80px; }
+}
+
+/* Fate Points, Revival Stones and Mount (alternate rules) reuse the Fatigue panel. */
+.gba-character .feue-alt-section .section-header { flex-wrap: wrap; gap: 8px; }
+.gba-character .feue-alt-option { display: flex; align-items: center; gap: 6px; font-size: 18px; }
+.gba-character .feue-alt-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 18px; margin: 4px 0; }
+.gba-character .feue-alt-row input[type="number"] { width: 52px; }
+.gba-character .feue-revival-stones .fa-gem { margin-right: 3px; color: #46577a; }
+.gba-character .feue-revival-stones .fa-gem.lit { color: #ff8fd0; text-shadow: 0 0 6px #ff5fb0; }
+.gba-character .feue-revival-bonus { padding: 2px 4px; border-left: 3px solid transparent; }
+.gba-character .feue-revival-bonus.active { border-left-color: #c6ffa6; background: #20356555; }
+.gba-character .feue-revival-bonuses .section-header { justify-content: space-between; }

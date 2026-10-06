@@ -54,6 +54,34 @@
         <p class="party-empty">No members. Drag character actors onto this sheet.</p>
         {{/if}}
 
+        <section class="party-convoy">
+            <h3><i class="fas fa-boxes-stacked"></i> Convoy <span>({{convoy.items.length}} items)</span></h3>
+            <p class="party-drop-hint">Drag weapons/items here to store them. Drag carried items to deposit them, or Convoy items to a character sheet to withdraw.</p>
+            <label class="party-convoy-unit-label">Unit <select class="party-convoy-unit">
+                {{#each convoy.units}}<option value="{{this.uuid}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}
+                {{#unless convoy.units.length}}<option value="">No owned Party members</option>{{/unless}}
+            </select></label>
+            {{#if convoy.inventory}}<p>{{convoy.selectedName}}: {{convoy.inventory.used}} / {{convoy.inventory.max}} inventory slots</p>{{/if}}
+            {{#if convoy.inCombat}}<p class="party-convoy-status">In combat: units reach the Convoy with Interact, as a Convoy unit or beside one (uses the Major Action). Only the GM can change stock here.</p>{{else}}<p class="party-convoy-status">Outside combat: owned Party members can deposit or withdraw.</p>{{/if}}
+            <p class="party-convoy-status">{{#if convoy.carriers}}Convoy units: {{convoy.carriers}}{{else}}No Convoy unit: tick Convoy on a member's character sheet to allow access in combat.{{/if}}</p>
+            {{#if convoy.reason}}<p class="party-convoy-status">{{convoy.reason}}</p>{{/if}}
+            <div class="party-convoy-actions">
+                <button type="button" class="party-convoy-deposit" {{#unless convoy.canDeposit}}disabled{{/unless}}><i class="fas fa-box"></i> Deposit from Unit</button>
+                <button type="button" class="party-convoy-add" title="{{convoy.manageReason}}" {{#unless convoy.canManage}}disabled{{/unless}}><i class="fas fa-plus"></i> Add Item</button>
+            </div>
+            <div class="party-convoy-list">
+                {{#each convoy.items}}
+                <div class="party-convoy-item item" data-convoy-item="{{this.id}}" data-item-id="{{this.id}}" draggable="true">
+                    <img src="{{this.img}}" width="32" height="32" alt="" />
+                    <div class="party-convoy-item-info"><strong>{{this.name}}</strong><span>Qty {{this.quantity}}{{#if this.uses}} · {{this.uses}} uses{{/if}}</span></div>
+                    <button type="button" class="party-convoy-details" title="View item"><i class="fas fa-book-open"></i></button>
+                    <button type="button" class="party-convoy-withdraw" {{#unless this.canWithdraw}}disabled{{/unless}}>Withdraw</button>
+                    <button type="button" class="party-convoy-discard" title="Discard from Convoy" {{#unless ../convoy.canManage}}disabled{{/unless}}><i class="fas fa-trash"></i></button>
+                </div>
+                {{else}}<p class="party-empty">Convoy is empty.</p>{{/each}}
+            </div>
+        </section>
+
         <div class="party-notes">
             <h3>Notes</h3>
             <textarea name="system.notes" rows="6">{{actor.system.notes}}</textarea>

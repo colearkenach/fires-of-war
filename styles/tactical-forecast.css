@@ -1,0 +1,82 @@
+/* A compact GBA-style unit panel; never intercept map clicks or drags. */
+#feue-tactical-hud {
+    position: fixed;
+    z-index: 60;
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 12px;
+    width: 316px;
+    max-width: calc(100vw - 32px);
+    min-height: 112px;
+    padding: 8px 12px 8px 8px;
+    box-sizing: border-box;
+    pointer-events: none;
+    user-select: none;
+    border: 3px solid #f1e7bd;
+    border-radius: 4px;
+    color: #fffbed;
+    background: repeating-linear-gradient(0deg, #ffffff08 0 1px, transparent 1px 3px),
+        linear-gradient(120deg, #5776af, #354b88 65%, #29396e);
+    box-shadow: inset 0 0 0 2px #a9c8e6, inset 0 0 0 3px #1a2a55,
+        0 0 0 1px #15213e, 3px 4px 0 #0d193b80;
+    font: 24px/1.1 "NocturneSerif-Regular", "Times New Roman", serif;
+    text-shadow: 2px 2px 0 #101a32;
+}
+#feue-tactical-hud .feue-forecast-portrait {
+    overflow: hidden;
+    min-height: 92px;
+    border: 1px solid #a3bce1;
+    background: linear-gradient(145deg, #b1cbe9, #627baa);
+    box-shadow: inset 1px 1px 0 #162951;
+}
+#feue-tactical-hud img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-height: 116px;
+    object-fit: contain;
+    object-position: bottom center;
+    image-rendering: pixelated;
+    border: 0;
+    border-radius: 0;
+}
+#feue-tactical-hud .feue-forecast-unit {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 7px;
+    min-width: 0;
+}
+#feue-tactical-hud .feue-forecast-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 29px;
+}
+#feue-tactical-hud .feue-forecast-hp {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    font-variant-numeric: tabular-nums;
+}
+#feue-tactical-hud .feue-forecast-hp > span { color: #fff0b0; }
+#feue-tactical-hud strong { font-weight: normal; white-space: nowrap; }
+#feue-tactical-hud .feue-forecast-hp-track {
+    height: 12px;
+    padding: 2px;
+    box-sizing: border-box;
+    border: 1px solid #fff0b0;
+    background: #16213c;
+    box-shadow: 1px 2px 0 #0a132c;
+}
+#feue-tactical-hud .feue-forecast-hp-track > div {
+    height: 100%;
+    background: linear-gradient(#fffbd3 0 45%, #deca77 45%);
+}
+#feue-tactical-hud[data-health="low"] .feue-forecast-hp-track > div {
+    background: linear-gradient(#ffe2a0 0 45%, #e8a65a 45%);
+}
+#feue-tactical-hud[data-health="critical"] .feue-forecast-hp-track > div {
+    background: linear-gradient(#ffb4a2 0 45%, #e6615c 45%);
+}

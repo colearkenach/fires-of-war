@@ -1,0 +1,301 @@
+/* Class sheet, promotion editor and class picker.
+ * Rules are scoped with :is(...) so they outrank the item sheet's generic GBA form rules. */
+
+/* ---------- Promotion editor window (same palette as the item sheet) ---------- */
+.feue-promo-editor .window-content {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    color: #fffbed;
+    background: linear-gradient(125deg, #293f6d, #172449 65%);
+    font: 14px/1.4 "Trebuchet MS", Arial, sans-serif;
+    color-scheme: dark;
+}
+.feue-promo-editor .dialog-content { flex: 1; min-height: 0; overflow-y: auto; padding-right: 4px; }
+.feue-promo-editor :is(input, select) {
+    height: 30px;
+    padding: 3px 7px;
+    border: 1px solid #99accf;
+    border-radius: 0;
+    background: #12234a;
+    color: #e6f6ff;
+    box-shadow: inset 1px 1px 0 #080f24;
+}
+.feue-promo-editor .dialog-buttons { flex: 0 0 auto; padding-top: 8px; }
+.feue-promo-editor .dialog-buttons button { border: 1px solid #f2e8bc; background: #26355f; color: #fff0b0; }
+.feue-promo-editor .dialog-buttons button:hover { background: #3a5291; }
+
+/* ---------- Shared class layout ---------- */
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-class-sheet { display: flex; flex-direction: column; gap: 10px; }
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-class-block {
+    margin: 0;
+    padding: 8px 10px 10px;
+    border: 1px solid #879bc380;
+    background: #10204499;
+}
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-class-block > h4,
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .promotion-heading h4 {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    margin: 0 0 7px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid #b4c3df40;
+    color: #fff0b0;
+    font: 19px/1.2 "NocturneSerif-Regular", "Times New Roman", serif;
+    text-shadow: 1px 1px 0 #080f24;
+}
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-class-block > h4 small {
+    color: #c9d5e8;
+    font: 12px/1.3 "Trebuchet MS", Arial, sans-serif;
+    text-shadow: none;
+}
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-class-hint {
+    margin: 7px 0 0;
+    color: #c9d5e8;
+    font: 12px/1.45 "Trebuchet MS", Arial, sans-serif;
+    text-shadow: none;
+}
+
+/* Overview: class type, max level and movement on one line. */
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-class-overview { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; }
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-promo-overview { grid-template-columns: 2fr 1.4fr 1fr 1fr; }
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-class-overview label {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    color: inherit;
+    font: inherit;
+    text-shadow: none;
+}
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-class-overview label > span {
+    color: #c9d5e8;
+    font: 600 11px/1.2 "Trebuchet MS", Arial, sans-serif;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-class-overview :is(input, select) { width: 100%; height: 30px; }
+
+/* Unit types and weapon proficiencies as toggle chips. */
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-chip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px 3px 4px;
+    border: 1px solid #4f6390;
+    border-radius: 999px;
+    background: #0d1a37;
+    color: #9aa7c4;
+    font: 13px/1.3 "Trebuchet MS", Arial, sans-serif;
+    text-shadow: none;
+    cursor: pointer;
+    user-select: none;
+}
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-chip input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-chip img {
+    flex: 0 0 22px;
+    width: 22px;
+    height: 22px;
+    padding: 3px;
+    border: 1px solid #3c4d74;
+    border-radius: 50%;
+    background: #152943;
+    opacity: .45;
+}
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-chip:hover { border-color: #8fa4d0; color: #dfe6f5; }
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-chip:has(input:checked) { border-color: #f1d786; background: #2b4a85; color: #fffbed; }
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-chip:has(input:checked) img { border-color: #f1d786; opacity: 1; }
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-chip:has(input:focus-visible) { outline: 2px solid #fff0b0; outline-offset: 2px; }
+
+/* Base / Growth / Cap table. */
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-class-stats { width: 100%; margin: 0; border-collapse: collapse; table-layout: fixed; background: none; border: 0; }
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-class-stats :is(th, td) { padding: 2px; border: 0; background: none; }
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-class-stats thead th {
+    color: #fff0b0;
+    font: 600 11px/1.2 "Trebuchet MS", Arial, sans-serif;
+    letter-spacing: .05em;
+    text-align: center;
+    text-transform: uppercase;
+}
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-class-stats thead th:first-child { width: 96px; }
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-class-stats tbody th {
+    color: #dfe6f5;
+    font: 13px/1.2 "Trebuchet MS", Arial, sans-serif;
+    text-align: left;
+    white-space: nowrap;
+}
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-class-stats tbody tr:nth-child(2n+1) { background: #ffffff08; }
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .feue-class-stats input {
+    width: 100%;
+    height: 28px;
+    padding: 1px 2px;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+}
+.feue-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Class skills. */
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .class-skills-list {
+    display: block;
+    min-height: 42px;
+    padding: 4px 6px;
+    border: 1px dashed #99accf;
+    background: #0d1a3780;
+}
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .class-skill-entry {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 8px;
+    padding: 4px 2px;
+    border: 0;
+    border-bottom: 1px solid #99accf33;
+    background: none;
+}
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .class-skill-entry:last-child { border-bottom: 0; }
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .class-skill-entry img { flex: 0 0 24px; border: 1px solid #879bc3; }
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .class-skill-name { flex: 1; min-width: 0; color: #fffbed; font-size: 14px; overflow-wrap: anywhere; }
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .class-skill-level-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #c9d5e8;
+    font: 12px "Trebuchet MS", Arial, sans-serif;
+    text-shadow: none;
+}
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .class-skill-level-label select { width: 78px; height: 26px; }
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) :is(.class-skill-remove, .promo-skill-remove) { padding: 3px; color: #ffd4b4; cursor: pointer; }
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .class-skills-empty { margin: 6px 2px; color: #b4c3df; font: italic 12px "Trebuchet MS", sans-serif; }
+
+/* Roleplay traits as a two-column table. */
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .class-roleplay-traits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 8px; }
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .class-roleplay-traits-grid > b {
+    color: #c9d5e8;
+    font: 600 11px/1.2 "Trebuchet MS", Arial, sans-serif;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .class-roleplay-trait-row { display: contents; }
+:is(.feue.sheet.item .gba-item, .feue-promo-editor) .class-roleplay-trait-row input { width: 100%; height: 30px; }
+
+/* Promotion tree. */
+.feue.sheet.item .gba-item .promotion-heading { display: flex; align-items: center; gap: 8px; }
+.feue.sheet.item .gba-item .promotion-heading h4 { flex: 1; margin: 0; border: 0; padding: 0; }
+.feue.sheet.item .gba-item .promotion-section #promotion-tree-container { margin-top: 6px; }
+.feue.sheet.item .gba-item .promo-tree-list { list-style: none; margin: 0 0 0 6px; padding-left: 10px; border-left: 1px solid #99accf80; }
+.feue.sheet.item .gba-item #promotion-tree-container > .promo-tree-list { margin-left: 0; padding-left: 0; border-left: 0; }
+.feue.sheet.item .gba-item .promo-tree-row { display: flex; align-items: center; gap: 6px; margin: 4px 0; padding: 6px 8px; border: 1px solid #879bc3; background: #213763; }
+.feue.sheet.item .gba-item .promo-tree-label { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; }
+.feue.sheet.item .gba-item .promo-tree-type { padding: 0 6px; border: 1px solid #879bc3; border-radius: 999px; color: #c9d5e8; font-size: 11px; }
+.feue.sheet.item .gba-item .promo-tree-summary { flex-basis: 100%; color: #c9d5e8; font-size: 12px; }
+
+/* ---------- Catalog picker (Add Class / Weapon / Item) ---------- */
+.feue-catalog-picker .window-content {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    color: #e9e6dc;
+    background: #151a2b;
+    font: 14px/1.35 "Signika", "Trebuchet MS", sans-serif;
+    color-scheme: dark;
+}
+.feue-catalog-picker .dialog-content { flex: 1; min-height: 0; margin: 0; }
+.feue-catalog-picker-body { display: flex; flex-direction: column; height: 100%; gap: 8px; padding: 10px 10px 4px; }
+.feue-catalog-picker .feue-catalog-search { height: 30px; border: 1px solid #3a4160; background: #0e1220; color: #e9e6dc; }
+.feue-catalog-tabs { display: flex; flex-wrap: wrap; gap: 0; border-bottom: 1px solid #343a54; }
+.feue-catalog-picker .feue-catalog-tabs button {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    height: auto;
+    line-height: 1.2;
+    margin: 0;
+    padding: 6px 6px 5px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    background: none;
+    color: #a6a9b8;
+    font: 13px/1.2 "Signika", sans-serif;
+    white-space: nowrap;
+}
+.feue-catalog-picker .feue-catalog-tabs button span { margin-left: 2px; color: #6f7590; font-size: 11px; }
+.feue-catalog-picker .feue-catalog-tabs button:hover { color: #e9e6dc; background: #1d2338; }
+.feue-catalog-picker .feue-catalog-tabs button[aria-selected="true"] { color: #f2c27c; border-bottom-color: #c64b3c; }
+.feue-catalog-panel { flex: 1; min-height: 0; overflow-y: auto; scrollbar-color: #8a2f2a #151a2b; }
+.feue-catalog-list { list-style: none; margin: 0; padding: 0; }
+.feue-catalog-group { border-bottom: 1px solid #262c43; }
+.feue-catalog-group > summary {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    background: #1a1f33;
+    color: #f2c27c;
+    font-weight: 600;
+    list-style: none;
+    cursor: pointer;
+}
+.feue-catalog-group > summary::-webkit-details-marker { display: none; }
+.feue-catalog-group > summary::before { content: "\25B8"; width: 10px; color: #a6a9b8; transition: transform .15s; }
+.feue-catalog-group[open] > summary::before { transform: rotate(90deg); }
+.feue-catalog-group > summary span { color: #6f7590; font-size: 11px; font-weight: normal; }
+.feue-catalog-group > summary:hover { background: #1d2338; }
+.feue-catalog-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border-bottom: 1px solid #262c43;
+    cursor: pointer;
+}
+.feue-catalog-option img { flex: 0 0 38px; width: 38px; height: 38px; object-fit: cover; border: 1px solid #343a54; background: #0e1220; }
+.feue-catalog-option-text { display: flex; flex: 1; flex-direction: column; min-width: 0; }
+.feue-catalog-option-text b { color: #f0ede4; font-weight: 600; }
+.feue-catalog-option-text small { overflow: hidden; color: #8f93a6; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.feue-catalog-warn { color: #e0806f; }
+.feue-catalog-tag { color: #8fc7a0; }
+.feue-catalog-option-text b :is(.feue-catalog-warn, .feue-catalog-tag) { font-size: 11px; font-weight: normal; }
+/* Fields under the list (support rank and affinity) and the by-name support form. */
+.feue-catalog-fields { display: flex; flex-wrap: wrap; gap: 8px 14px; padding: 8px 4px 2px; border-top: 1px solid #343a54; }
+.feue-catalog-fields label { display: flex; align-items: center; gap: 6px; color: #a6a9b8; font-size: 12px; }
+.feue-catalog-fields label.wide { flex-basis: 100%; }
+.feue-catalog-fields label.wide input { flex: 1; }
+.feue-catalog-picker .feue-catalog-fields :is(input, select) { width: auto; height: 28px; border: 1px solid #3a4160; background: #0e1220; color: #e9e6dc; }
+.feue-catalog-form { padding-bottom: 8px; }
+.feue-catalog-form .feue-catalog-fields { padding-top: 0; border-top: 0; }
+.feue-catalog-hint { margin: 0; color: #8f93a6; font-size: 12px; }
+.feue-catalog-option input[type="radio"] { flex: 0 0 18px; width: 18px; height: 18px; margin: 0; accent-color: #c64b3c; }
+.feue-catalog-option:hover { background: #1d2338; }
+.feue-catalog-option:has(input:checked) { background: #2b2038; box-shadow: inset 3px 0 0 #c64b3c; }
+.feue-catalog-option.locked { cursor: not-allowed; opacity: .45; }
+.feue-catalog-locked-note { margin: 6px 4px; padding: 6px 8px; border-left: 3px solid #c64b3c; background: #22192a; color: #e4c9c4; font-size: 12px; }
+.feue-catalog-empty { padding: 10px; color: #8f93a6; font-style: italic; }
+.feue-catalog-blank { align-self: flex-start; width: auto; margin: 0; padding: 2px 6px; border: 0; background: none; color: #a6a9b8; font-size: 12px; }
+.feue-catalog-blank:hover { color: #f2c27c; background: none; text-decoration: underline; }
+.feue-catalog-picker .dialog-buttons { flex: 0 0 auto; gap: 8px; padding: 8px 10px 10px; }
+.feue-catalog-picker .dialog-buttons button { height: 34px; border: 1px solid #4a506c; background: #1f2438; color: #e9e6dc; }
+.feue-catalog-picker .dialog-buttons button:hover { border-color: #c64b3c; background: #2b2038; }
+
+/* ---------- Character sheet: Allegiance in the sidebar ---------- */
+.gba-character .unit-allegiance { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 3px 0; }
+.gba-character .unit-allegiance .gba-label { font-size: 19px; }
+.gba-character .unit-allegiance select { width: auto; min-width: 0; height: 28px; padding: 1px 4px; font-size: 15px; }
+
+/* Create Actor dialog. */
+.feue-create-allegiance .hint { flex-basis: 100%; }

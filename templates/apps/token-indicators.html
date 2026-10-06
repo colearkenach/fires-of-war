@@ -1,0 +1,28 @@
+<form class="feue-indicator-form" autocomplete="off">
+    <p class="notes">Unit types appear at a token's bottom-left corner and the equipped weapon at its bottom-right. Weapon rings use the triangle colours: Physical red, Special green, Magic purple. Clear an entry to hide that badge. Each player can turn indicators off with the client setting <b>Token Indicators</b>.</p>
+    <h3>Unit types</h3>
+    {{#each unitTypes as |row|}}
+    <div class="form-group feue-indicator-row">
+        <img src="{{row.value}}" alt="" class="{{#unless row.value}}empty{{/unless}}" />
+        <label>{{row.label}}</label>
+        <div class="form-fields">
+            <input type="text" name="{{row.group}}.{{row.key}}" value="{{row.value}}" data-icon data-fallback="{{row.fallback}}" placeholder="No badge" />
+            <button type="button" data-browse="{{row.group}}.{{row.key}}" title="Browse"><i class="fas fa-file-import"></i></button>
+            <button type="button" data-reset="{{row.group}}.{{row.key}}" title="Use the default icon"><i class="fas fa-undo"></i></button>
+        </div>
+    </div>
+    {{/each}}
+    <h3>Equipped weapon</h3>
+    {{#each weapons as |row|}}
+    <div class="form-group feue-indicator-row">
+        <img src="{{row.value}}" alt="" class="{{#unless row.value}}empty{{/unless}}" />
+        <label>{{row.label}}</label>
+        <div class="form-fields">
+            <input type="text" name="{{row.group}}.{{row.key}}" value="{{row.value}}" data-icon data-fallback="{{row.fallback}}" placeholder="No badge" />
+            <button type="button" data-browse="{{row.group}}.{{row.key}}" title="Browse"><i class="fas fa-file-import"></i></button>
+            <button type="button" data-reset="{{row.group}}.{{row.key}}" title="Use the default icon"><i class="fas fa-undo"></i></button>
+        </div>
+    </div>
+    {{/each}}
+    <footer class="sheet-footer flexrow"><button type="submit"><i class="fas fa-save"></i> Save Icons</button></footer>
+</form>

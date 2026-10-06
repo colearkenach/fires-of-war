@@ -1,8 +1,9 @@
-<form class="feue {{cssClass}} flexcol" autocomplete="off">
+<form class="feue gba-item {{cssClass}} flexcol" autocomplete="off">
     <header class="sheet-header flexrow">
-        <img class="item-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" />
+        <img class="item-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" alt="{{item.name}}" />
         <div class="header-fields flexcol">
-            <h1 class="item-name"><input name="name" type="text" value="{{item.name}}" placeholder="Item Name" /></h1>
+            <div class="item-kind">{{itemTypeLabel}}</div>
+            <h1 class="item-name"><input name="name" type="text" value="{{item.name}}" placeholder="Item Name" aria-label="Item name" /></h1>
         </div>
     </header>
 
@@ -126,14 +127,14 @@
             {{/ifEquals}}
             <div class="form-row">
                 <div class="form-group"><label>{{#ifEquals item.system.weaponType "staff"}}Healing{{else}}Might{{/ifEquals}}</label><input type="number" data-dtype="Number" name="system.might" value="{{item.system.might}}" placeholder="0" /></div>
-                <div class="form-group"><label>Hit Rate{{#ifEquals item.system.weaponType "staff"}} <span style="opacity:0.6;font-size:10px;">(optional)</span>{{/ifEquals}}</label><input type="number" data-dtype="Number" name="system.hit" value="{{item.system.hit}}" placeholder="0" /></div>
+                <div class="form-group"><label>Hit Rate{{#ifEquals item.system.weaponType "staff"}} <span class="item-hint">(optional)</span>{{/ifEquals}}</label><input type="number" data-dtype="Number" name="system.hit" value="{{item.system.hit}}" placeholder="0" /></div>
                 {{#unless (eq item.system.weaponType "staff")}}
                 <div class="form-group"><label>Crit Rate</label><input type="number" data-dtype="Number" name="system.crit" value="{{item.system.crit}}" placeholder="0" /></div>
                 {{/unless}}
             </div>
             <div class="form-row">
                 <div class="form-group"><label>Range</label><input type="text" name="system.range" value="{{item.system.range}}" placeholder="1" /></div>
-                <div class="form-group"><label>Uses</label><div class="uses-group"><input type="number" data-dtype="Number" name="system.uses.value" value="{{item.system.uses.value}}" placeholder="0" min="0" /><span>/</span><input type="number" data-dtype="Number" name="system.uses.max" value="{{item.system.uses.max}}" placeholder="0" min="0" /></div></div>
+                <div class="form-group"><label title="0/0 grants infinite uses.">Uses</label><div class="uses-group"><input type="number" data-dtype="Number" name="system.uses.value" value="{{item.system.uses.value}}" placeholder="0" min="0" /><span>/</span><input type="number" data-dtype="Number" name="system.uses.max" value="{{item.system.uses.max}}" placeholder="0" min="0" /></div><p class="item-hint">0/0 = infinite uses.</p></div>
             </div>
             <div class="form-group feue-weapon-properties">
                 <label>Weapon Properties</label>
@@ -151,6 +152,14 @@
                     <label><input type="checkbox" name="system.properties.absorb" {{checked item.system.properties.absorb}} /> Absorb</label>
                     <label><input type="checkbox" name="system.properties.puncture" {{checked item.system.properties.puncture}} /> Puncture</label>
                     <label><input type="checkbox" name="system.properties.piercing" {{checked item.system.properties.piercing}} /> Piercing</label>
+                    <label><input type="checkbox" name="system.properties.brave" {{checked item.system.properties.brave}} /> Brave</label>
+                    <label><input type="checkbox" name="system.properties.poison" {{checked item.system.properties.poison}} /> Poison</label>
+                    <label><input type="checkbox" name="system.properties.reverse" {{checked item.system.properties.reverse}} /> Reverse</label>
+                    <label><input type="checkbox" name="system.properties.superior" {{checked item.system.properties.superior}} /> Superior</label>
+                    <label><input type="checkbox" name="system.properties.smash" {{checked item.system.properties.smash}} /> Smash</label>
+                    <label><input type="checkbox" name="system.properties.crippling" {{checked item.system.properties.crippling}} /> Crippling</label>
+                    <label><input type="checkbox" name="system.properties.vehicle" {{checked item.system.properties.vehicle}} /> Vehicle</label>
+                    <label><input type="checkbox" name="system.properties.petrify" {{checked item.system.properties.petrify}} /> Petrify</label>
                     <label><input type="checkbox" name="system.properties.slayer.enabled" {{checked item.system.properties.slayer.enabled}} /> Slayer</label>
                 </div>
                 {{#if item.system.properties.slayer.enabled}}
@@ -175,21 +184,55 @@
             <select name="system.itemType">
                 <option value="consumable" {{#ifEquals item.system.itemType "consumable"}} selected{{/ifEquals}}>Consumable</option>
                 <option value="equippable" {{#ifEquals item.system.itemType "equippable"}} selected{{/ifEquals}}>Equippable</option>
+                <option value="miscellaneous" {{#ifEquals item.system.itemType "miscellaneous"}} selected{{/ifEquals}}>Miscellaneous / Treasure</option>
             </select>
+            {{#unless (eq item.system.itemType "miscellaneous")}}
             <div class="form-row">
                 <div class="form-group">
-                    <label>Uses</label>
+                    <label title="0/0 grants infinite uses.">Uses</label>
                     <div class="uses-group">
                         <input type="number" data-dtype="Number" name="system.uses.value" value="{{item.system.uses.value}}" min="0" placeholder="0" />
                         <span>/</span>
                         <input type="number" data-dtype="Number" name="system.uses.max" value="{{item.system.uses.max}}" min="0" placeholder="0" />
                     </div>
+                    <p class="item-hint">0/0 = infinite uses.</p>
                 </div>
             </div>
             <div class="form-group"><label>Effect</label><textarea name="system.effect" rows="2">{{item.system.effect}}</textarea></div>
-            {{#if properPromotionEnabled}}
-            <div class="form-group"><label title="Consumed when the character promotes under the Proper Promotion alt rule."><input type="checkbox" name="flags.fires-of-war.isPromotionItem" {{#if isPromotionItem}}checked{{/if}} /> Promotion Item</label></div>
+            {{#if (eq item.system.itemType "equippable")}}{{#if replaceableMounts}}
+            <fieldset class="feue-mount-config">
+                <legend>Mount</legend>
+                <label title="Mounts use their own equipment slot, separate from shields and accessories."><input type="checkbox" name="system.mountSlot" {{checked item.system.mountSlot}} /> This item is a Mount (separate Mount slot)</label>
+                {{#if item.system.mountSlot}}
+                <div class="form-row">
+                    <div class="form-group"><label>Mount type</label><select name="system.mountType">{{#each mountTypes as |type|}}<option value="{{type}}" {{#ifEquals ../item.system.mountType type}}selected{{/ifEquals}}>{{type}}</option>{{/each}}</select></div>
+                    <div class="form-group"><label>Restriction</label><input type="text" name="system.mountRestriction" value="{{item.system.mountRestriction}}" placeholder="e.g. Great Knight only" /></div>
+                </div>
+                <div class="form-group"><label title="When the rider Dismounts, a token of this character Actor is placed next to them as a separate unit.">Mount unit</label><select name="system.mountActor"><option value="">None (the mount is not a separate unit)</option>{{#each mountActors as |actor|}}<option value="{{actor.id}}" {{#ifEquals ../item.system.mountActor actor.id}}selected{{/ifEquals}}>{{actor.name}}</option>{{/each}}</select></div>
+                <p class="item-hint">Benefits such as +1 MOV or +2 DEF go in this item's stat bonuses and apply only while the rider is mounted.{{#if mountIsLost}} <b>This mount was lost when its rider was forcibly dismounted.</b>{{/if}}</p>
+                {{#if mountIsLost}}<label><input type="checkbox" name="flags.fires-of-war.mountLost" checked /> Lost (clear to restore)</label>{{/if}}
+                {{/if}}
+            </fieldset>
+            {{/if}}{{/if}}
+            {{#if classChangeEnabled}}
+            <fieldset class="feue-class-change-config">
+                <legend>Class Change</legend>
+                <div class="form-group"><label>Effect</label><select name="system.classChange.mode">{{#each classChange.modes as |mode|}}<option value="{{mode.value}}" {{#if mode.selected}}selected{{/if}}>{{mode.label}}</option>{{/each}}</select></div>
+                {{#if classChange.isPromote}}
+                <div class="feue-class-change-classes">
+                    {{#each classChange.classes as |name|}}<span class="feue-class-change-tag">{{name}} <a data-class-change-remove="{{@index}}" title="Remove {{name}}"><i class="fas fa-times"></i></a></span>
+                    {{else}}<span class="item-hint">No classes listed yet: this item cannot promote anyone.</span>{{/each}}
+                </div>
+                <div class="feue-class-change-entry">
+                    <input type="text" class="feue-class-change-name" list="{{classChange.listId}}" placeholder="Class name" aria-label="Class name" />
+                    <datalist id="{{classChange.listId}}">{{#each classChangeSuggestions as |name|}}<option value="{{name}}"></option>{{/each}}</datalist>
+                    <button type="button" class="feue-class-change-add"><i class="fas fa-plus"></i> Add</button>
+                </div>
+                {{/if}}
+                <p class="item-hint">{{classChange.hint}}</p>
+            </fieldset>
             {{/if}}
+            {{/unless}}
         </div>
         {{/if}}
 
@@ -209,14 +252,68 @@
                 <div class="form-group"><label>Level</label><select name="system.level"><option value="Innate" {{#ifEquals item.system.level "Innate"}} selected{{/ifEquals}}>Innate</option><option value="1" {{#ifEquals item.system.level "1"}} selected{{/ifEquals}}>1</option><option value="5" {{#ifEquals item.system.level "5"}} selected{{/ifEquals}}>5</option><option value="10" {{#ifEquals item.system.level "10"}} selected{{/ifEquals}}>10</option><option value="15" {{#ifEquals item.system.level "15"}} selected{{/ifEquals}}>15</option><option value="20" {{#ifEquals item.system.level "20"}} selected{{/ifEquals}}>20</option><option value="30" {{#ifEquals item.system.level "30"}} selected{{/ifEquals}}>30</option></select></div>
             </div>
             <div class="form-group"><label>Effects</label><textarea name="system.activation" rows="2">{{item.system.activation}}</textarea></div>
+            {{#if revivalStonesEnabled}}
+            <fieldset class="feue-revival-gate">
+                <legend>Revival Stones</legend>
+                <div class="form-row">
+                    <div class="form-group"><label>Availability</label><select name="system.revivalGate.mode">
+                        <option value="" {{#unless item.system.revivalGate.mode}}selected{{/unless}}>Always available</option>
+                        <option value="until" {{#ifEquals item.system.revivalGate.mode "until"}}selected{{/ifEquals}}>Locked until this many stones or fewer remain</option>
+                        <option value="disabled" {{#ifEquals item.system.revivalGate.mode "disabled"}}selected{{/ifEquals}}>Disabled once this many stones or fewer remain</option>
+                    </select></div>
+                    <div class="form-group"><label>Revival Stones</label><input type="number" data-dtype="Number" name="system.revivalGate.stones" value="{{revivalGateStones}}" min="0" max="5" step="1" /></div>
+                </div>
+                <p class="hint">Empowering Revival: lock a boss's strongest skills until it is on its last legs, or have a skill fade as it is beaten down. Units without Revival Stones ignore this.</p>
+            </fieldset>
+            {{/if}}
+            <fieldset class="item-activation">
+                <legend>Automation</legend>
+                <p class="feue-automation-summary {{automationStatus}}">{{automationSummary}}</p>
+                <p class="hint">Rulebook defaults show the skill’s actual effects below. Editing them switches to Custom effects. Choose when it applies, which weapon types qualify, and whether it affects this unit or nearby units. Effects text describes the skill; use these controls to automate conditions.</p>
+                <div class="form-group"><label>Mode</label><select name="system.automation.mode"><option value="auto" {{#ifEquals item.system.automation.mode "auto"}}selected{{/ifEquals}}>Rulebook defaults</option><option value="custom" {{#ifEquals item.system.automation.mode "custom"}}selected{{/ifEquals}}>Custom effects</option><option value="off" {{#ifEquals item.system.automation.mode "off"}}selected{{/ifEquals}}>Off</option></select></div>
+                <div class="form-group"><label>Applies</label><select name="system.automation.trigger"><option value="Passive" {{#ifEquals automationConfig.trigger "Passive"}}selected{{/ifEquals}}>Always / HP condition</option><option value="Attack" {{#ifEquals automationConfig.trigger "Attack"}}selected{{/ifEquals}}>On own attack</option><option value="Combat" {{#ifEquals automationConfig.trigger "Combat"}}selected{{/ifEquals}}>In combat (either side)</option><option value="Opponent" {{#ifEquals automationConfig.trigger "Opponent"}}selected{{/ifEquals}}>Against opponent's weapon</option><option value="Defense" {{#ifEquals automationConfig.trigger "Defense"}}selected{{/ifEquals}}>On incoming hit</option><option value="Aura" {{#ifEquals automationConfig.trigger "Aura"}}selected{{/ifEquals}}>Nearby units (aura)</option>{{#unless (eq automationConfig.trigger "Passive")}}{{#unless (eq automationConfig.trigger "Attack")}}{{#unless (eq automationConfig.trigger "Combat")}}{{#unless (eq automationConfig.trigger "Opponent")}}{{#unless (eq automationConfig.trigger "Defense")}}{{#unless (eq automationConfig.trigger "Aura")}}<option value="{{automationConfig.trigger}}" selected>Rulebook: {{automationConfig.trigger}}</option>{{/unless}}{{/unless}}{{/unless}}{{/unless}}{{/unless}}{{/unless}}</select></div>
+                <div class="form-row">
+                    <div class="form-group"><label>Combat condition</label><select name="system.automation.phase"><option value="any" {{#ifEquals automationConfig.phase "any"}}selected{{/ifEquals}}>Either side</option><option value="initiating" {{#ifEquals automationConfig.phase "initiating"}}selected{{/ifEquals}}>When this unit initiates</option><option value="retaliating" {{#ifEquals automationConfig.phase "retaliating"}}selected{{/ifEquals}}>When this unit retaliates</option></select></div>
+                    <div class="form-group"><label>Weapon types</label><input type="text" name="system.automation.weapons" value="{{automationConfig.weapons}}" placeholder="Any, or sword, lance, axe" /></div>
+                </div>
+                <p class="hint">Weapon types filter this unit’s weapon on Attack/Combat, and the opponent’s weapon on Defense/Opponent. Separate types with commas; leave blank for any weapon.</p>
+                {{#ifEquals automationConfig.trigger "Aura"}}<div class="form-row">
+                    <div class="form-group"><label>Aura affects</label><select name="system.automation.auraTarget"><option value="enemies" {{#ifEquals automationConfig.auraTarget "enemies"}}selected{{/ifEquals}}>Enemies</option><option value="allies" {{#ifEquals automationConfig.auraTarget "allies"}}selected{{/ifEquals}}>Allies</option><option value="team" {{#ifEquals automationConfig.auraTarget "team"}}selected{{/ifEquals}}>This unit and allies</option><option value="all" {{#ifEquals automationConfig.auraTarget "all"}}selected{{/ifEquals}}>All nearby units</option></select></div>
+                    <div class="form-group"><label>Aura radius (squares)</label><input type="number" data-dtype="Number" name="system.automation.auraRadius" value="{{automationConfig.auraRadius}}" min="1" step="1" /></div>
+                </div>{{/ifEquals}}
+                <div class="form-row">
+                    <div class="form-group"><label>At or below HP % (0 = any)</label><input type="number" data-dtype="Number" name="system.automation.hp" value="{{automationConfig.hp}}" min="0" max="100" /></div>
+                    <div class="form-group"><label>Hit bonus / penalty</label><input type="number" data-dtype="Number" name="system.automation.hit" value="{{automationConfig.hit}}" /></div>
+                    <div class="form-group"><label>Crit bonus / penalty</label><input type="number" data-dtype="Number" name="system.automation.crit" value="{{automationConfig.crit}}" /></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Avoid bonus / penalty</label><input type="number" data-dtype="Number" name="system.automation.avoid" value="{{automationConfig.avoid}}" /></div>
+                    <div class="form-group"><label>Dodge bonus / penalty</label><input type="number" data-dtype="Number" name="system.automation.dodge" value="{{automationConfig.dodge}}" /></div>
+                    <div class="form-group"><label>Damage reduction (Defense / Aura)</label><input type="number" data-dtype="Number" name="system.automation.damageReduction" value="{{automationConfig.damageReduction}}" min="0" /></div>
+                </div>
+                {{#unless (eq automationConfig.trigger "Passive")}}<div class="form-row">
+                    <div class="form-group"><label>Damage bonus (Attack / Aura)</label><input type="number" data-dtype="Number" name="system.automation.damage" value="{{automationConfig.damage}}" /></div>
+                    {{#unless (eq automationConfig.trigger "Aura")}}
+                    <div class="form-group"><label>Enemy defense multiplier (Attack)</label><input type="number" data-dtype="Number" name="system.automation.defenseMultiplier" value="{{automationConfig.defenseMultiplier}}" min="0" max="1" step="0.1" /></div>
+                    <div class="form-group"><label>Damage multiplier (0.5 = half)</label><input type="number" data-dtype="Number" name="system.automation.damageMultiplier" value="{{automationConfig.damageMultiplier}}" min="0" step="0.1" /></div>
+                    <div class="form-group"><label>Heal fraction (Attack)</label><input type="number" data-dtype="Number" name="system.automation.healingFraction" value="{{automationConfig.healingFraction}}" min="0" max="1" step="0.1" /></div>
+                    {{/unless}}
+                </div>{{/unless}}
+                {{#ifEquals automationConfig.trigger "Attack"}}<div class="form-row">
+                    <div class="form-group"><label>Weapon-use multiplier</label><input type="number" data-dtype="Number" name="system.automation.useMultiplier" value="{{automationConfig.useMultiplier}}" min="0" step="0.1" /></div>
+                    <div class="form-group"><label>Strikes per activation</label><input type="number" data-dtype="Number" name="system.automation.strikes" value="{{automationConfig.strikes}}" min="1" max="10" /></div>
+                    <div class="form-group"><label><input type="checkbox" name="system.automation.brave" {{checked automationConfig.brave}} /> Brave opening</label></div>
+                </div>{{/ifEquals}}
+                {{#ifEquals automationConfig.trigger "Passive"}}<p class="hint">Always-on stat bonuses and penalties also use the Description tab’s Stat Bonuses. Hit, Crit, Avoid and Dodge here override matching Description bonuses.</p>{{/ifEquals}}
+            </fieldset>
 
-            {{#unless (eq item.system.skillType "Passive")}}
-            <fieldset style="margin-top:8px;padding:6px;border:1px solid #aaa;border-radius:4px;">
+            <fieldset class="item-activation">
                 <legend>Activation</legend>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Trigger</label>
                         <select name="system.activationTrigger">
+                            <option value="Passive" {{#ifEquals item.system.activationTrigger "Passive"}} selected{{/ifEquals}}>Passive / Always on</option>
                             <option value="Manual" {{#ifEquals item.system.activationTrigger "Manual"}} selected{{/ifEquals}}>Manual</option>
                             <option value="Attack" {{#ifEquals item.system.activationTrigger "Attack"}} selected{{/ifEquals}}>On Attack</option>
                             <option value="Defense" {{#ifEquals item.system.activationTrigger "Defense"}} selected{{/ifEquals}}>On Defense</option>
@@ -249,9 +346,8 @@
                     <div class="form-group"><label>Multiplier</label><input type="number" data-dtype="Number" name="system.activationMult" value="{{item.system.activationMult}}" step="0.1" /></div>
                     <div class="form-group"><label>Fixed #</label><input type="number" data-dtype="Number" name="system.activationFixed" value="{{item.system.activationFixed}}" /></div>
                 </div>
-                <p style="font-size:11px;opacity:0.7;margin:4px 0 0;">Target number is rolled against on 1d100 (success on roll ≤ target). Attack/Defense triggers fire automatically on the relevant roll; Manual must be triggered from the sheet.</p>
+                <p class="item-hint">Passive applies constant bonuses without rolling. Passive (Activated) skills roll 1d100 on Attack/Defense; Manual is rolled from the sheet. Custom trigger and conditions control when custom effects apply.</p>
             </fieldset>
-            {{/unless}}
         </div>
         {{/if}}
 
@@ -286,6 +382,12 @@
                 <div class="form-group"><label>Range</label><input type="text" name="system.range" value="{{item.system.range}}" placeholder="1-2" /></div>
             </div>
             <div class="form-group"><label>Special Effects</label><textarea name="system.special" rows="2" placeholder="Special...">{{item.system.special}}</textarea></div>
+            <fieldset class="feue-admix-config">
+                <legend>Admix</legend>
+                <div class="form-group"><label>Admix weapon</label><input type="text" name="system.admixWeapon" value="{{item.system.admixWeapon}}" list="feue-admix-weapons-{{item.id}}" placeholder="{{item.name}} (same name)" />
+                    <datalist id="feue-admix-weapons-{{item.id}}">{{#each admixWeapons as |name|}}<option value="{{name}}"></option>{{/each}}</datalist></div>
+                <p class="hint">Casting this spell while the named weapon is equipped grants the Admix Bonus: +2 Mt (or healing), +10 Hit, +5 Crit, and the HP cost is reduced by 2 (minimum 1). Leave blank to use the tome of the same name.</p>
+            </fieldset>
         </div>
         {{/if}}
 
@@ -305,7 +407,7 @@
                     </select>
                 </div>
             </div>
-            <div class="form-group"><label>Durability Cost</label><input type="number" data-dtype="Number" name="system.durabilityCost" value="{{item.system.durabilityCost}}" placeholder="0" min="0" /></div>
+            <div class="form-row"><div class="form-group"><label>Required weapon rank</label><select name="system.requiredRank"><option value="">Any rank</option>{{#each FEUE.WEAPON_RANKS as |rd rk|}}{{#unless (eq rk "")}}<option value="{{rk}}" {{#ifEquals ../item.system.requiredRank rk}}selected{{/ifEquals}}>{{rd.label}}</option>{{/unless}}{{/each}}</select></div><div class="form-group"><label>Durability Cost</label><input type="number" data-dtype="Number" name="system.durabilityCost" value="{{item.system.durabilityCost}}" placeholder="0" min="0" /></div></div>
             <div class="form-row">
                 <div class="form-group"><label>Might Bonus</label><input type="number" data-dtype="Number" name="system.might" value="{{item.system.might}}" placeholder="0" /></div>
                 <div class="form-group"><label>Hit Bonus</label><input type="number" data-dtype="Number" name="system.hit" value="{{item.system.hit}}" placeholder="0" /></div>
@@ -316,6 +418,7 @@
                 <div class="form-group"><label>Dodge Bonus</label><input type="number" data-dtype="Number" name="system.dodge" value="{{item.system.dodge}}" placeholder="0" /></div>
             </div>
             <div class="form-group"><label>Prerequisites</label><input type="text" name="system.prerequisites" value="{{item.system.prerequisites}}" placeholder="e.g. STR 13, any D" /></div>
+            <p class="item-hint">Separate requirements with commas: STR 13, Sword D, Level 5, Skill: Luna, Class: Mercenary. Use “or” for alternatives. Only eligible arts are shown on the character sheet and action bars.</p>
             <div class="form-group"><label>Effects</label><textarea name="system.effect" rows="2" placeholder="Effect...">{{item.system.effect}}</textarea></div>
         </div>
         {{/if}}
@@ -338,7 +441,16 @@
                 <div class="form-group"><label>Move Penalty</label><input type="number" data-dtype="Number" name="system.movePenalty" value="{{item.system.movePenalty}}" max="0" placeholder="0" /></div>
             </div>
             <div class="form-row">
-                <div class="form-group"><label>Range</label><input type="text" name="system.range" value="{{item.system.range}}" placeholder="0" /></div>
+                <div class="form-group">
+                    <label>Area</label>
+                    <select name="system.range">
+                        <option value="" {{#unless areaShape}}selected{{/unless}}>None (commander only)</option>
+                        {{#each areaPresets as |preset|}}<option value="{{preset.key}}" {{#if preset.selected}}selected{{/if}}>{{preset.label}}</option>{{/each}}
+                        <option value="custom" {{#ifEquals areaShape "custom"}}selected{{/ifEquals}}>Custom area</option>
+                        {{#if areaLegacy}}<option value="{{areaLegacy}}" selected>Legacy range: {{areaLegacy}}</option>{{/if}}
+                    </select>
+                </div>
+                <div class="form-group"><label title="Squares the area can be pushed forward when aiming (Three Houses-style gambits). 0 keeps it attached to the commander.">Extra reach</label><input type="number" data-dtype="Number" name="system.area.reach" value="{{areaReach}}" min="0" step="1" /></div>
                 <div class="form-group">
                     <label>Endurance</label>
                     <div class="uses-group">
@@ -348,156 +460,92 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group"><label>Properties</label><textarea name="system.properties" rows="2" placeholder="Properties...">{{item.system.properties}}</textarea></div>
+            <fieldset class="feue-area-fieldset">
+                <legend>Area of effect</legend>
+                <p class="hint">{{areaSummary}} The commander (C) faces up; on the map the area turns to face where you aim. Click squares to edit the area; editing a preset turns it into a Custom area.</p>
+                <div class="feue-area-tools">
+                    <button type="button" data-area-mode="area" class="{{#ifEquals areaMode "area"}}active{{/ifEquals}}"><i class="fas fa-paint-brush"></i> Paint area</button>
+                    <button type="button" data-area-mode="origin" class="{{#ifEquals areaMode "origin"}}active{{/ifEquals}}"><i class="fas fa-chess-pawn"></i> Place commander</button>
+                    <button type="button" class="feue-area-clear"><i class="fas fa-eraser"></i> Clear</button>
+                </div>
+                <div class="feue-area-editor" data-mode="{{areaMode}}" role="grid" aria-label="Battalion area editor">
+                    {{#each areaRows as |row|}}<div class="feue-area-row" role="row">{{#each row as |cell|}}<button type="button" role="gridcell" class="feue-area-cell{{#if cell.on}} on{{/if}}{{#if cell.origin}} origin{{/if}}" data-cell="{{cell.key}}" aria-label="{{#if cell.origin}}Commander{{else}}{{#if cell.on}}In area{{else}}Empty{{/if}}{{/if}} {{cell.key}}">{{#if cell.origin}}C{{/if}}</button>{{/each}}</div>{{/each}}
+                </div>
+            </fieldset>
+            <div class="form-group"><label>Properties</label><textarea name="system.properties" rows="2" placeholder="Slayer (Flying) · Major Action: Grant allies in range +4 DEF for 1 turn · Major Action: Heal allies in area for 15 HP · Heal self for 10 HP. · Swap places with an enemy on a hit.">{{item.system.properties}}</textarea></div>
+            <p class="hint">Recognized special text: Slayer (types), Grant allies in range +N STAT for N turns, Heal allies in area for N HP, Heal self for N HP, Swap places, Magical (targets RES).</p>
         </div>
         {{/if}}
 
         {{!-- Class Tab --}}
         {{#if (eq item.type "class")}}
-    <div class="tab class" data-group="primary" data-tab="class">
-        <div class="form-row">
-            <div class="form-group">
-                <label>Class Type</label>
+    <div class="tab class feue-class-sheet" data-group="primary" data-tab="class">
+        <section class="feue-class-block feue-class-overview">
+            <label><span>Class type</span>
                 <select name="system.classType">
-                    <option value="Recruit" {{#ifEquals item.system.classType "Recruit"}} selected{{/ifEquals}}>Recruit</option>
-                    <option value="Standard" {{#ifEquals item.system.classType "Standard"}} selected{{/ifEquals}}>Standard</option>
-                    <!--<option value="Promoted" {{#ifEquals item.system.classType "Promoted"}} selected{{/ifEquals}}>Promoted</option>-->
-                    <option value="Advanced" {{#ifEquals item.system.classType "Advanced"}} selected{{/ifEquals}}>Advanced</option>
-                    <option value="Enemy Only" {{#ifEquals item.system.classType "Enemy Only"}} selected{{/ifEquals}}>Enemy Only</option>
+                    {{#each classTypeChoices as |type|}}<option value="{{type}}" {{#ifEquals ../item.system.classType type}}selected{{/ifEquals}}>{{type}}</option>{{/each}}
                 </select>
-            </div>
-            <div class="form-group"><label>Max Level</label><input type="number" data-dtype="Number" name="system.maxLevel" value="{{item.system.maxLevel}}" max="40" min="1" placeholder="10" /></div>
-            <div class="form-group"><label>Movement</label><input type="number" data-dtype="Number" name="system.movement" value="{{item.system.movement}}" min="0" placeholder="4" /></div>
-        </div>
-
-        <div class="form-group">
-            <div class="unit-types">
-                <h3>Unit Types</h3>
-                {{#each FEUE.UNIT_TYPES as |type|}}
-                <label>
-                    <input type="checkbox" name="system.unitTypes.{{type}}" {{checked (lookup ../item.system.unitTypes type)}} /> {{type}}
-                </label>
-                {{/each}}
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="weapon-proficiencies">
-                <h3>Weapon Proficiencies</h3>
-                {{#each FEUE.WeaponTypes as |label key|}}
-                <label>
-                    <input type="checkbox" name="system.weaponProficiencies.{{key}}" {{checked (lookup ../item.system.weaponProficiencies key)}} /> {{label}}
-                </label>
-                {{/each}}
-            </div>
-        </div>
-        <div class="form-group">
-            <label>
-                <input type="checkbox" name="system.battalionProficiency" {{checked item.system.battalionProficiency}} /> Battalion Proficiency
             </label>
-        </div>
+            <label><span>Max level</span><input type="number" data-dtype="Number" name="system.maxLevel" value="{{item.system.maxLevel}}" max="40" min="1" placeholder="20" /></label>
+            <label><span>Movement</span><input type="number" data-dtype="Number" name="system.movement" value="{{item.system.movement}}" min="0" placeholder="5" /></label>
+        </section>
 
-        <hr />
-        <div class="form-group">
-            <div class="class-skills-section">
-                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
-                    <h3 style="margin:0;">Class Skills</h3>
-                    <span style="font-size:11px; color:#666; font-style:italic;">Drag & drop skill items here</span>
+        {{{classChipsHtml}}}
+
+        <section class="feue-class-block">
+            <h4>Stats</h4>
+            {{{classStatsHtml}}}
+            <p class="feue-class-hint">{{#if classIsPromoted}}Promotion bonus is added once when a unit promotes into this class.{{else}}Base stats are a new unit's starting values.{{/if}} Growth uses the d10 growth rule; Cap is the class maximum (0 = none).</p>
+        </section>
+
+        <section class="feue-class-block class-skills-section">
+            <h4>Class Skills <small>Drag &amp; drop skill items here</small></h4>
+            <div class="class-skills-list">
+                {{#each item.system.classSkills as |cs|}}
+                <div class="class-skill-entry" data-skill-index="{{@index}}">
+                    <img src="{{cs.skillData.img}}" width="24" height="24" alt="" />
+                    <span class="class-skill-name">{{cs.skillData.name}}</span>
+                    <label class="class-skill-level-label">Level
+                    <select class="class-skill-level" data-skill-index="{{@index}}">
+                        <option value="Innate" {{#ifEquals cs.level "Innate"}} selected{{/ifEquals}}>Innate</option>
+                        <option value="1" {{#ifEquals cs.level "1"}} selected{{/ifEquals}}>1</option>
+                        <option value="5" {{#ifEquals cs.level "5"}} selected{{/ifEquals}}>5</option>
+                        <option value="10" {{#ifEquals cs.level "10"}} selected{{/ifEquals}}>10</option>
+                        <option value="15" {{#ifEquals cs.level "15"}} selected{{/ifEquals}}>15</option>
+                        <option value="20" {{#ifEquals cs.level "20"}} selected{{/ifEquals}}>20</option>
+                        <option value="30" {{#ifEquals cs.level "30"}} selected{{/ifEquals}}>30</option>
+                    </select></label>
+                    <a class="class-skill-remove" data-skill-index="{{@index}}" title="Remove {{cs.skillData.name}}"><i class="fas fa-trash"></i></a>
                 </div>
-                <div class="class-skills-list" style="min-height:40px; border:1px dashed #b8a080; padding:8px; border-radius:4px; background:rgba(139,115,85,0.05);">
-                    {{#each item.system.classSkills as |cs|}}
-                    <div class="class-skill-entry" data-skill-index="{{@index}}">
-                        <img src="{{cs.skillData.img}}" width="24" height="24" />
-                        <span class="class-skill-name">{{cs.skillData.name}}</span>
-                        <select class="class-skill-level" data-skill-index="{{@index}}">
-                            <option value="Innate" {{#ifEquals cs.level "Innate"}} selected{{/ifEquals}}>Innate</option>
-                            <option value="1" {{#ifEquals cs.level "1"}} selected{{/ifEquals}}>1</option>
-                            <option value="5" {{#ifEquals cs.level "5"}} selected{{/ifEquals}}>5</option>
-                            <option value="10" {{#ifEquals cs.level "10"}} selected{{/ifEquals}}>10</option>
-                            <option value="15" {{#ifEquals cs.level "15"}} selected{{/ifEquals}}>15</option>
-                            <option value="20" {{#ifEquals cs.level "20"}} selected{{/ifEquals}}>20</option>
-                            <option value="30" {{#ifEquals cs.level "30"}} selected{{/ifEquals}}>30</option>
-                        </select>
-                        <a class="class-skill-remove" data-skill-index="{{@index}}" title="Remove"><i class="fas fa-trash"></i></a>
-                    </div>
-                    {{else}}
-                    <p class="class-skills-empty">No skills defined. Drag skill items here.</p>
-                    {{/each}}
+                {{else}}
+                <p class="class-skills-empty">No skills yet. Drag skill items here.</p>
+                {{/each}}
+            </div>
+        </section>
+
+        <section class="feue-class-block class-roleplay-traits-section">
+            <h4>Roleplay Traits <small>Each optional trait replaces the base trait beside it</small></h4>
+            <div class="class-roleplay-traits-grid">
+                <b>Base trait</b><b>Optional replacement</b>
+                {{#each classRoleplayTraits as |trait|}}
+                <div class="class-roleplay-trait-row">
+                    <input type="text" class="class-roleplay-trait" data-roleplay-field="base" value="{{trait.base}}" placeholder="Base trait" />
+                    <input type="text" class="class-roleplay-trait" data-roleplay-field="alternative" value="{{trait.alternative}}" placeholder="Optional replacement" />
                 </div>
+                {{/each}}
             </div>
-        </div>
-
-        <hr />
-        
-        <div class="form-group">
-            <h3>Base Stats</h3>
-            <div class="form-row">
-                <div class="form-group"><label>HP</label><input type="number" data-dtype="Number" name="system.baseStats.hp" value="{{item.system.baseStats.hp}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Str</label><input type="number" data-dtype="Number" name="system.baseStats.strength" value="{{item.system.baseStats.strength}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Mag</label><input type="number" data-dtype="Number" name="system.baseStats.magic" value="{{item.system.baseStats.magic}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Skl</label><input type="number" data-dtype="Number" name="system.baseStats.skill" value="{{item.system.baseStats.skill}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Spd</label><input type="number" data-dtype="Number" name="system.baseStats.speed" value="{{item.system.baseStats.speed}}" min="0" placeholder="0" /></div>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><label>Def</label><input type="number" data-dtype="Number" name="system.baseStats.defense" value="{{item.system.baseStats.defense}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Res</label><input type="number" data-dtype="Number" name="system.baseStats.resistance" value="{{item.system.baseStats.resistance}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Lck</label><input type="number" data-dtype="Number" name="system.baseStats.luck" value="{{item.system.baseStats.luck}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Cha</label><input type="number" data-dtype="Number" name="system.baseStats.charm" value="{{item.system.baseStats.charm}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Bld</label><input type="number" data-dtype="Number" name="system.baseStats.build" value="{{item.system.baseStats.build}}" min="0" placeholder="0" /></div>
-            </div>
-        </div>
-        <hr />
-
-        <div class="form-group">
-            <h3>Growth Rates</h3>
-            <div class="form-row">
-                <div class="form-group"><label>HP</label><input type="number" data-dtype="Number" name="system.growthRates.hp" value="{{item.system.growthRates.hp}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Str</label><input type="number" data-dtype="Number" name="system.growthRates.strength" value="{{item.system.growthRates.strength}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Mag</label><input type="number" data-dtype="Number" name="system.growthRates.magic" value="{{item.system.growthRates.magic}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Skl</label><input type="number" data-dtype="Number" name="system.growthRates.skill" value="{{item.system.growthRates.skill}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Spd</label><input type="number" data-dtype="Number" name="system.growthRates.speed" value="{{item.system.growthRates.speed}}" min="0" placeholder="0" /></div>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><label>Def</label><input type="number" data-dtype="Number" name="system.growthRates.defense" value="{{item.system.growthRates.defense}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Res</label><input type="number" data-dtype="Number" name="system.growthRates.resistance" value="{{item.system.growthRates.resistance}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Lck</label><input type="number" data-dtype="Number" name="system.growthRates.luck" value="{{item.system.growthRates.luck}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Cha</label><input type="number" data-dtype="Number" name="system.growthRates.charm" value="{{item.system.growthRates.charm}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Bld</label><input type="number" data-dtype="Number" name="system.growthRates.build" value="{{item.system.growthRates.build}}" min="0" placeholder="0" /></div>
-            </div>
-        </div>
-        <hr />
-        <div class="form-group">
-            <h3>Stat Caps</h3>
-            <div class="form-row">
-                <div class="form-group"><label>HP</label><input type="number" data-dtype="Number" name="system.statCaps.hp" value="{{item.system.statCaps.hp}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Str</label><input type="number" data-dtype="Number" name="system.statCaps.strength" value="{{item.system.statCaps.strength}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Mag</label><input type="number" data-dtype="Number" name="system.statCaps.magic" value="{{item.system.statCaps.magic}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Skl</label><input type="number" data-dtype="Number" name="system.statCaps.skill" value="{{item.system.statCaps.skill}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Spd</label><input type="number" data-dtype="Number" name="system.statCaps.speed" value="{{item.system.statCaps.speed}}" min="0" placeholder="0" /></div>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><label>Def</label><input type="number" data-dtype="Number" name="system.statCaps.defense" value="{{item.system.statCaps.defense}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Res</label><input type="number" data-dtype="Number" name="system.statCaps.resistance" value="{{item.system.statCaps.resistance}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Lck</label><input type="number" data-dtype="Number" name="system.statCaps.luck" value="{{item.system.statCaps.luck}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Cha</label><input type="number" data-dtype="Number" name="system.statCaps.charm" value="{{item.system.statCaps.charm}}" min="0" placeholder="0" /></div>
-                <div class="form-group"><label>Bld</label><input type="number" data-dtype="Number" name="system.statCaps.build" value="{{item.system.statCaps.build}}" min="0" placeholder="0" /></div>
-            </div>
-        </div>
+        </section>
 
         {{!-- Promotion Tree --}}
-        <hr />
-        <div class="form-group">
-            <div style="align-items:center; justify-content:space-between; margin-bottom:8px;">
-                <h3 style="margin:0;">Promotion Tree</h3>
-                <br />
-                <a class="promo-add-root" style="cursor:pointer; background:linear-gradient(180deg,#4a6fa5,#2c4875); color:white; border:1px solid #2c4875; border-radius:4px; padding:2px 8px; font-size:12px; display:inline-flex; align-items:center; gap:4px;">
-                    <i class="fas fa-plus"></i> Add Promotion
-                </a>
-                <a class="promo-paste-root" style="cursor:pointer; background:linear-gradient(180deg,#5a8a5a,#3a6a3a); color:white; border:1px solid #3a6a3a; border-radius:4px; padding:2px 8px; font-size:12px; display:inline-flex; align-items:center; gap:4px; margin-left:4px;">
-                    <i class="fas fa-paste"></i> Paste Promotion
-                </a>
+        <section class="feue-class-block promotion-section">
+            <div class="item-section-heading promotion-heading">
+                <h4>Promotion Tree</h4>
+                <a class="promo-add-root"><i class="fas fa-plus"></i> Add promotion</a>
+                <a class="promo-paste-root"><i class="fas fa-paste"></i> Paste</a>
             </div>
-            <div id="promotion-tree-container" style="min-height:40px; border:1px dashed #b8a080; padding:6px; border-radius:4px; background:rgba(139,115,85,0.05);"></div>
-        </div>
+            <p class="feue-class-hint">Drop a class item here or use Add promotion. Click a promotion's edit button to change its stats, weapons and skills.</p>
+            <div id="promotion-tree-container"></div>
+        </section>
     </div>
         {{/if}}
 

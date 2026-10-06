@@ -1,0 +1,30 @@
+.feue-combat-text {
+    position: fixed;
+    z-index: 100;
+    pointer-events: none;
+    padding: 7px 15px;
+    max-width: 320px;
+    border: 2px solid #e4cc84;
+    border-radius: 6px;
+    background: linear-gradient(#242e48, #111827);
+    box-shadow: 0 3px 12px #000b, inset 0 0 0 1px #0008;
+    color: #fff5d5;
+    font: bold 22px/1.2 Georgia, serif;
+    text-align: center;
+    text-shadow: 1px 2px 2px #000;
+    transform: translate(-50%, -100%);
+    animation: feue-combat-text var(--feue-combat-duration) ease-out forwards;
+}
+.feue-combat-text.skill { color: #a8e9ff; border-color: #64b9df; font-size: 20px; }
+.feue-combat-text.hit { color: #f5e9be; }
+.feue-combat-text.crit { color: #ffcf68; border-color: #ff9a40; font-size: 28px; }
+.feue-combat-text.miss { color: #c8d2e8; border-color: #8f9db5; }
+.feue-combat-text.damage { color: #ffb4a2; border-color: #e7826a; font-size: 26px; }
+@keyframes feue-combat-text {
+    0% { opacity: 0; transform: translate(-50%, -80%) scale(.9); }
+    15%, 60% { opacity: 1; transform: translate(-50%, -100%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, calc(-100% - 18px)); }
+}
+@media (prefers-reduced-motion: reduce) {
+    @keyframes feue-combat-text { 0%, 75% { opacity: 1; } 100% { opacity: 0; } }
+}

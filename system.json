@@ -2,8 +2,8 @@
   "id": "fires-of-war",
   "name": "fires-of-war",
   "title": "Fires of War",
-  "description": "A system for playing Fires of War in Foundry VTT...",
-  "version": "13.0.0",
+  "description": "A Foundry VTT system for Fires of War.",
+  "version": "13.0.13",
   "authors": [
     {
       "name": "Jeremy H.",
@@ -36,7 +36,14 @@
     }
   },
   "styles": [
-    "styles/fires-of-war.css"
+    "styles/fires-of-war.css",
+    "styles/character-gba.css",
+    "styles/character-action-hud.css",
+    "styles/battle-forecast.css",
+    "styles/combat-presentation.css",
+    "styles/tactical-encounter.css",
+    "styles/class-ui.css",
+    "styles/combat-ai.css"
   ],
   "packs": [
     {

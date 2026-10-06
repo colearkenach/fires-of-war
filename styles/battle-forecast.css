@@ -1,0 +1,108 @@
+/* Battle forecast: a framed arena with blue initiator and red defender panels. */
+.feue-battle-dialog {
+    --battle-cream: #f4e7b4;
+    --battle-ink: #131729;
+    border: 2px solid #d8c78f;
+    border-radius: 7px;
+    box-shadow: 0 12px 48px #000b, inset 0 0 0 2px #252333;
+}
+.feue-battle-dialog .window-header { background: #171b2b; color: #f4e7b4; border-bottom: 1px solid #897c59; }
+.feue-battle-dialog .window-content {
+    padding: 14px;
+    color: #f9f1d8;
+    background: repeating-linear-gradient(0deg, #ffffff03 0 1px, transparent 1px 3px), linear-gradient(140deg, #32354a, #171c2b);
+}
+.feue-battle-form { margin: 0; font: 14px/1.4 system-ui, sans-serif; }
+.feue-battle-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 12px; margin-bottom: 12px; }
+.feue-battle-heading > span { color: #f4e7b4; font: 26px/1.2 "NocturneSerif-Regular", Georgia, serif; }
+.feue-battle-heading small { color: #c0bfcc; font-size: 11px; }
+.feue-battle-arena { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.feue-battle-unit {
+    --side-light: #acdafa;
+    --side-color: #537cc1;
+    --side-dark: #283d72;
+    position: relative;
+    min-width: 0;
+    padding: 12px;
+    border: 2px solid #cdbf94;
+    border-radius: 3px;
+    background: linear-gradient(155deg, var(--side-dark), #1a2034 70%);
+    box-shadow: inset 0 0 0 1px #090f23, 0 3px 0 #080c18;
+}
+.feue-battle-unit.defender { --side-light: #ffb8ac; --side-color: #bb5b65; --side-dark: #713b4e; }
+.feue-battle-role { color: var(--side-light); text-transform: uppercase; letter-spacing: 2px; font-size: 10px; font-weight: 700; }
+.feue-battle-unit.defender .feue-battle-role { text-align: right; }
+.feue-battle-portrait {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    height: 130px;
+    margin: 8px 0 0;
+    background: radial-gradient(ellipse at 50% 90%, #06091588 0 22%, transparent 23%), radial-gradient(ellipse at 50% 60%, var(--side-color), transparent 73%);
+}
+.feue-battle-portrait img { width: 100%; height: 100%; object-fit: contain; object-position: center bottom; border: 0; border-radius: 0; image-rendering: pixelated; filter: drop-shadow(0 5px 3px #0006); }
+.feue-battle-unit h2 { margin: 6px 0; padding: 4px 0 6px; border: 0; border-bottom: 1px solid #cdbf9470; color: #fff4d1; font: 25px/1.2 "NocturneSerif-Regular", Georgia, serif; text-shadow: 1px 2px #090d23; overflow-wrap: anywhere; }
+.feue-battle-weapon { display: flex; align-items: center; gap: 7px; min-height: 36px; padding: 4px 6px; background: linear-gradient(90deg, var(--side-dark), #ffffff0a); border: 1px solid #cfbf9470; }
+.feue-battle-weapon img { flex: 0 0 25px; width: 25px; height: 25px; object-fit: contain; border: 0; }
+.feue-battle-weapon span { flex: 1; min-width: 0; overflow-wrap: anywhere; font-weight: 600; font-size: 12px; }
+.feue-battle-weapon small { color: var(--side-light); white-space: nowrap; font-size: 10px; }
+.feue-triangle-badge { flex: 0 0 auto; padding: 0 4px; border-radius: 3px; font-size: 13px; line-height: 18px; text-shadow: 0 1px 0 #0008; cursor: help; }
+.feue-triangle-badge.advantage { color: #7dff9b; background: #0d4a2a; }
+.feue-triangle-badge.disadvantage { color: #ff8a7a; background: #5a1610; }
+.feue-battle-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 12px; margin: 8px 0; font-variant-numeric: tabular-nums; }
+.feue-battle-stats > div { display: flex; justify-content: space-between; align-items: baseline; gap: 4px; }
+.feue-battle-stats span { color: #d2c28f; font-weight: 600; font-size: 11px; }
+.feue-battle-stats strong { color: #fff8e3; font-size: 20px; }
+.feue-battle-stats em { color: var(--side-light); font-size: 15px; font-style: normal; }
+.feue-battle-health { display: flex; justify-content: space-between; margin-bottom: 4px; font-variant-numeric: tabular-nums; }
+.feue-battle-health > span { color: #d2c28f; font-size: 11px; }
+.feue-battle-health-track { height: 13px; padding: 2px; background: #0f1426; border: 1px solid #d2c28f; }
+.feue-battle-health-track > div { height: 100%; background: linear-gradient(#c1efa3 0 45%, #74b65b 45%); }
+.feue-battle-note { min-height: 18px; margin-top: 9px; color: var(--side-light); font-size: 11px; }
+.feue-battle-warning { color: #ffd179; font-weight: 700; font-size: 11px; }
+.feue-battle-versus { position: absolute; top: 93px; left: 50%; transform: translateX(-50%); z-index: 1; color: #e8d297; font: italic 23px Georgia, serif; text-shadow: 0 2px 3px #000; }
+.feue-battle-order { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; padding: 12px 0; margin-top: 10px; border-top: 1px solid #d2c28f60; border-bottom: 1px solid #d2c28f60; }
+.feue-battle-order > span { color: #d2c28f; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+.feue-battle-order > div { display: flex; align-items: center; gap: 6px; }
+.feue-battle-step { padding: 4px 9px; border: 1px solid #9bbdeb; border-radius: 3px; color: #dbf1ff; background: #304c84; font-weight: 700; font-size: 12px; }
+.feue-battle-step.defender { border-color: #e3a09e; color: #ffe1d8; background: #74394a; }
+.feue-battle-next { color: #d2c28f; }
+.feue-battle-triangle { display: flex; align-items: center; gap: 12px; margin: 12px 0; }
+.feue-battle-triangle label { color: #d2c28f; font-size: 12px; white-space: nowrap; }
+.feue-battle-triangle select { flex: 1; min-width: 0; height: 32px; padding: 4px 8px; color: #f9f1d8; background: #161c2f; border: 1px solid #897c59; }
+.feue-battle-triangle option { background: #161c2f; }
+.feue-battle-dialog .dialog-buttons { display: flex; gap: 10px; margin-top: 0; }
+.feue-battle-dialog .dialog-button { min-height: 40px; margin: 0; border: 1px solid #cdbf94; border-radius: 3px; color: #fff4d1; background: linear-gradient(#42455b, #222738); box-shadow: inset 0 0 0 2px #171b2b; font-weight: 600; }
+.feue-battle-dialog .dialog-button[data-button="roll"] { background: linear-gradient(#4e6da0, #2a3c61); }
+.feue-battle-dialog .dialog-button:hover, .feue-battle-dialog .dialog-button:focus-visible { outline: 2px solid #f4e7b4; outline-offset: 2px; box-shadow: none; }
+.feue-battle-roll { padding: 10px; border: 1px solid #968558; border-radius: 3px; color: #f9f1d8; background: linear-gradient(135deg, #334666, #1b2336); }
+.feue-battle-roll .feue-battle-roll-heading { color: #e4cd91; text-transform: uppercase; letter-spacing: 1px; font-size: 10px; }
+.feue-battle-roll h3 { margin: 5px 0; border: 0; color: #fff4d1; }
+.feue-battle-roll-weapon { color: #b9d9fc; margin-bottom: 10px; }
+.feue-battle-result { display: flex; justify-content: space-between; gap: 6px; padding: 7px; margin: 8px 0; border: 1px solid #b0d79a; color: #c7efa9; background: #111a2b; font-weight: 700; }
+.feue-battle-result span { font-size: 12px; font-weight: 400; }
+.feue-battle-result.miss { color: #ffb4a4; border-color: #b57373; }
+.feue-battle-result.critical { color: #ffe293; border-color: #ffe293; }
+.feue-battle-damage { display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 10px 0; padding: 8px; border-block: 1px solid #e4cd9140; background: #111a2b60; }
+.feue-battle-damage > span { color: #e4cd91; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+.feue-battle-damage > strong { color: #fff0b2; font: 800 40px/1.1 system-ui, sans-serif; font-variant-numeric: tabular-nums; text-shadow: 0 2px 2px #0008; cursor: help; }
+.feue-battle-damage > strong:focus-visible { outline: 1px solid #e4cd91; outline-offset: 3px; border-radius: 2px; }
+@media (max-width: 520px) {
+    .feue-battle-dialog .window-content { padding: 8px; }
+    .feue-battle-arena { gap: 7px; }
+    .feue-battle-unit { padding: 8px; }
+    .feue-battle-portrait { height: 115px; }
+    .feue-battle-unit h2 { font-size: 20px; }
+    .feue-battle-stats { grid-template-columns: 1fr; gap: 2px; }
+    .feue-battle-versus { top: 78px; font-size: 17px; }
+    .feue-battle-weapon { flex-wrap: wrap; }
+    .feue-battle-triangle { gap: 6px; }
+}
+
+/* Declared skills and passive skill notes */
+.feue-battle-stats > div[data-tooltip] { cursor: help; }
+.feue-battle-skills { margin-top: 4px; color: #b8d8a8; font-size: 11px; line-height: 1.3; }
+.feue-battle-declared { margin-top: 4px; color: #f3d77a; font-size: 12px; text-align: center; }
+.feue-battle-declare { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; padding: 4px 8px; border: 1px solid rgba(212, 175, 55, 0.5); }
+.feue-battle-declare legend { padding: 0 4px; }
+.feue-battle-declare label { display: inline-flex; align-items: center; gap: 4px; }

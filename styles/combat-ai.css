@@ -1,0 +1,35 @@
+/* Combat AI: the read-only Battle Forecast shown while an AI unit attacks, and encounter/tracker controls. */
+#feue-ai-forecast {
+    position: fixed; top: 64px; left: 50%; z-index: 65; transform: translateX(-50%);
+    width: min(480px, calc(100vw - 32px)); padding: 8px 10px 2px;
+    color: #f9f1d8; font: 13px/1.35 system-ui, sans-serif; pointer-events: none;
+    border: 2px solid #d8c78f; border-radius: 7px;
+    background: repeating-linear-gradient(0deg, #ffffff03 0 1px, transparent 1px 3px), linear-gradient(140deg, #32354aee, #171c2bee);
+    box-shadow: 0 12px 48px #000b, inset 0 0 0 2px #252333;
+    animation: feue-ai-forecast-in 180ms ease-out;
+}
+.feue-ai-forecast-title { margin-bottom: 8px; color: #f4e7b4; font: 18px/1.2 "NocturneSerif-Regular", Georgia, serif; letter-spacing: 0.5px; }
+#feue-ai-forecast .feue-battle-arena { gap: 8px; }
+#feue-ai-forecast .feue-battle-unit { padding: 8px; }
+#feue-ai-forecast .feue-battle-portrait { height: 52px; margin-top: 4px; }
+#feue-ai-forecast .feue-battle-unit h2 { margin: 4px 0; padding: 2px 0 4px; font-size: 17px; }
+#feue-ai-forecast .feue-battle-versus { top: 50px; font-size: 18px; }
+#feue-ai-forecast .feue-battle-note, #feue-ai-forecast .feue-battle-skills { margin-top: 4px; }
+#feue-ai-forecast .feue-battle-stats { margin: 6px 0; }
+#feue-ai-forecast .feue-battle-stats strong { font-size: 17px; }
+#feue-ai-forecast .feue-battle-order { padding: 8px 0; margin-top: 6px; }
+@keyframes feue-ai-forecast-in { from { opacity: 0; transform: translate(-50%, -8px); } to { opacity: 1; transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { #feue-ai-forecast { animation: none; } }
+
+.feue-ai-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; font-size: 12px; }
+.feue-ai-controls > span { display: inline-flex; align-items: center; gap: 6px; }
+.feue-ai-controls button { flex: 0 0 auto; width: auto; min-height: 26px; padding: 0 10px; line-height: 24px; }
+.feue-ai-controls button:only-child { flex: 1; }
+
+.feue-faction-row .feue-faction-ai { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 3px; white-space: nowrap; }
+.feue-faction-row .feue-faction-ai input { margin: 0; }
+.feue-encounter-setup .feue-ai-hints { font-size: 12px; opacity: 0.85; }
+.feue-encounter-setup .feue-ai-autoend { display: flex; align-items: center; gap: 6px; margin: 6px 0; }
+.feue-unit-allegiances .feue-unit-selects { display: flex; gap: 6px; width: 64%; }
+.feue-unit-allegiances .feue-unit-selects select { flex: 1; width: auto; min-width: 0; }
+.feue-ai-config { margin-top: 12px; }

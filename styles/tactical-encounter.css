@@ -1,0 +1,90 @@
+#feue-terrain-tooltip { position: fixed; left: 230px; bottom: 155px; width: 265px; z-index: 60; pointer-events: none; padding: 12px 16px; color: #fdf5dd; border: 3px double #dec88c; border-radius: 9px; background: linear-gradient(135deg, #263b64ee, #12213bee); box-shadow: 0 3px 15px #000a; font: 14px var(--font-primary, sans-serif); }
+#feue-terrain-tooltip[hidden] { display: none; }
+#feue-terrain-tooltip strong { font-size: 20px; }
+#feue-terrain-tooltip p { margin: 6px 0 0; line-height: 1.35; }
+.feue-terrain-numbers { display: flex; gap: 24px; margin-top: 6px; font-weight: bold; color: #fff; }
+.feue-terrain-config, .feue-strides { margin-top: 12px; }
+.feue-strides label { display: inline-flex; align-items: center; gap: 4px; margin-right: 12px; }
+.feue-interaction-config, .feue-event-tile-config { margin-top: 12px; }
+.feue-interaction-config > label, .feue-event-tile-config > label { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+.feue-interaction-menu { max-height: 65vh; overflow-y: auto; }
+.feue-interaction-menu > button { width: 100%; text-align: left; margin: 4px 0; }
+.feue-interaction-menu .hint { margin: 0 0 8px; }
+.feue-convoy-interact .hint { margin: 0 0 8px; }
+.feue-convoy-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.feue-convoy-columns h4 { display: flex; justify-content: space-between; margin: 0 0 4px; padding-bottom: 2px; border-bottom: 1px solid #7a6a4a80; }
+.feue-convoy-columns ul { list-style: none; margin: 0; padding: 0; max-height: 48vh; overflow-y: auto; }
+.feue-convoy-row { display: flex; align-items: center; gap: 6px; padding: 3px 0; }
+.feue-convoy-row img { flex: 0 0 28px; border: none; }
+.feue-convoy-row span { flex: 1; min-width: 0; display: grid; }
+.feue-convoy-row strong { overflow-wrap: anywhere; }
+.feue-convoy-row small { font-size: 11px; opacity: .75; }
+.feue-convoy-row button { flex: 0 0 auto; width: auto; line-height: 22px; }
+.feue-convoy-row.staged { font-style: italic; color: #2f6d3a; }
+.feue-convoy-columns .empty { opacity: .7; font-style: italic; }
+@media (max-width: 560px) { .feue-convoy-columns { grid-template-columns: 1fr; } }
+.feue-encounter-summary { padding: 8px; display: grid; gap: 5px; border-bottom: 1px solid var(--color-border-light-primary, #777); }
+.feue-objectives-button { font-weight: bold; }
+.feue-phase-header { list-style: none; padding: 7px 10px; font-weight: bold; background: #263b64; color: #e8dcc0; border-left: 4px solid #999; }
+.feue-phase-current { border-color: #f2d576; background: #3c5487; color: #fff; }
+.feue-unit-acted .token-name { opacity: .55; }
+.feue-unit-slain .token-name { text-decoration: line-through; }
+.feue-unit-escaped .token-name { opacity: .55; font-style: italic; }
+.feue-event-tile-config [hidden], .feue-encounter-setup [hidden] { display: none !important; }
+.feue-escape-options > label, .feue-tile-objective-options > label { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 8px 0; }
+.feue-escape-options select, .feue-tile-objective-options select { width: 60%; }
+.feue-acted-button { min-width: 32px; padding: 2px; }
+.feue-encounter-setup { max-height: 65vh; overflow-y: auto; padding-right: 8px; }
+.feue-encounter-setup h3 { margin-top: 14px; }
+.feue-encounter-setup p { font-size: 13px; }
+.feue-faction-row { display: flex; align-items: center; gap: 5px; margin: 5px 0; }
+.feue-faction-row input { flex: 1; min-width: 70px; }
+.feue-faction-row select { flex: 1; }
+.feue-faction-row button { flex: 0 0 28px; width: 28px; }
+.feue-boss-choice { display: block; margin: 4px 0; }
+.feue-unit-allegiances label { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 5px 0; }
+.feue-unit-allegiances select { width: 50%; }
+.feue-victory { border: 2px solid #c5a957; padding: 8px; }
+.feue-sheet-terrain { grid-column: 1 / -1; margin: 4px 0; padding: 6px 10px; border: 1px solid #c5a957; font-size: 12px; }
+@media (max-width: 800px) { #feue-terrain-tooltip { left: 12px; bottom: 230px; width: 220px; } }
+
+/* Phase announcement banner (Player / Neutral / Enemy / Other Phase). */
+#feue-phase-banner {
+    position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center;
+    pointer-events: none; overflow: hidden;
+}
+#feue-phase-banner span {
+    display: block; width: 100%; padding: 0.35em 0; text-align: center; color: #fff;
+    font: bold clamp(30px, 6vw, 68px)/1.1 "ChiaroStd-Bold", "Signika", system-ui, sans-serif; letter-spacing: 0.16em; text-transform: uppercase;
+    text-shadow: 0 3px 0 #0008, 0 0 22px var(--feue-phase-glow);
+    background: linear-gradient(90deg, transparent, var(--feue-phase-band) 16%, var(--feue-phase-band) 84%, transparent);
+    border-block: 3px solid var(--feue-phase-edge);
+    animation: feue-phase-sweep var(--feue-phase-duration, 2200ms) ease-in-out forwards;
+}
+.feue-phase-player { --feue-phase-band: #1b4c9ee0; --feue-phase-edge: #a9d4ff; --feue-phase-glow: #5aa8ff; }
+.feue-phase-npc { --feue-phase-band: #1d7340e0; --feue-phase-edge: #b6f2c4; --feue-phase-glow: #58d886; }
+.feue-phase-enemy { --feue-phase-band: #9e221be0; --feue-phase-edge: #ffb7a6; --feue-phase-glow: #ff5a4a; }
+.feue-phase-other { --feue-phase-band: #8a6a14e0; --feue-phase-edge: #ffe596; --feue-phase-glow: #f1c44a; }
+@keyframes feue-phase-sweep {
+    0% { transform: translateX(-100%); opacity: 0; }
+    16% { transform: translateX(0); opacity: 1; }
+    80% { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(100%); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    #feue-phase-banner span { animation-name: feue-phase-fade; }
+    @keyframes feue-phase-fade { 0%, 100% { opacity: 0; } 12%, 85% { opacity: 1; } }
+}
+
+/* Token Indicator Icons settings. */
+.feue-indicator-config .window-content { overflow-y: auto; }
+.feue-indicator-config .notes { margin: 0 0 6px; }
+.feue-indicator-config h3 { margin: 10px 0 4px; padding-bottom: 2px; border-bottom: 1px solid #7a6a4a80; }
+.feue-indicator-config .feue-indicator-row { display: grid; grid-template-columns: 34px 96px minmax(0, 1fr); align-items: center; gap: 8px; margin: 3px 0; }
+.feue-indicator-config .feue-indicator-row label { text-align: left; font-weight: bold; }
+.feue-indicator-config .feue-indicator-row img { width: 30px; height: 30px; padding: 4px; border: 2px solid #f1d786; border-radius: 50%; background: #152943; object-fit: contain; box-sizing: border-box; }
+.feue-indicator-config .feue-indicator-row img.empty { visibility: hidden; }
+.feue-indicator-config .feue-indicator-row .form-fields { display: flex; gap: 4px; }
+.feue-indicator-config .feue-indicator-row .form-fields input { flex: 1; min-width: 0; }
+.feue-indicator-config .feue-indicator-row .form-fields button { flex: 0 0 30px; width: 30px; padding: 0; }
+.feue-indicator-config .sheet-footer { margin-top: 10px; }
