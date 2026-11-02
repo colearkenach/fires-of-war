@@ -61,7 +61,8 @@ export function terrainMovement(key, traits) {
 export function terrainAt(scene, point) {
     const regions = Array.from(scene?.regions ?? []).filter(region => {
         const key = region.flags?.[SYSTEM_ID]?.terrain;
-        return TERRAINS[key] && (region.testPoint?.(point) ?? region.object?.testPoint?.(point, point.elevation));
+        return TERRAINS[key] && (!point.level || region.includedInLevel?.(point.level) !== false) &&
+            (region.testPoint?.(point) ?? region.object?.testPoint?.(point, point.elevation));
     }).sort((a, b) => (Number(b.flags?.[SYSTEM_ID]?.terrainPriority) || 0) -
         (Number(a.flags?.[SYSTEM_ID]?.terrainPriority) || 0) || String(a.id).localeCompare(String(b.id)));
     const region = regions[0];
@@ -75,7 +76,7 @@ export function tokenTerrain(token, scene = (token?.document ?? token)?.parent) 
     // Always get the Scene from the TokenDocument before testing Regions.
     const size = scene?.grid?.size ?? 100;
     return terrainAt(scene, {x: (doc?.x ?? 0) + (doc?.width ?? 1) * size / 2,
-        y: (doc?.y ?? 0) + (doc?.height ?? 1) * size / 2, elevation: doc?.elevation ?? 0});
+        y: (doc?.y ?? 0) + (doc?.height ?? 1) * size / 2, elevation: doc?.elevation ?? 0, level: doc?.level});
 }
 
 export function actorTerrain(actor) {

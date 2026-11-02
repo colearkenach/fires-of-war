@@ -77,7 +77,8 @@ export async function scanEscapeTiles(scene, combat, services, arrivals = new Ma
         if (source.actor?.type !== "character" || source.hidden || unavailableUnit(source) || evaluateObjective(combat).complete) continue;
         let tile, arrival;
         for (const point of [...(arrivals.get(source.id) ?? []), source]) {
-            tile = tiles.find(tile => !objectiveInteractionReason(source, tile, "escape", combat) &&
+            tile = tiles.find(tile => (!(point.level ?? source.level) || tile.includedInLevel?.(point.level ?? source.level) !== false) &&
+                !objectiveInteractionReason(source, tile, "escape", combat) &&
                 footprintDistance(tokenCells(source, grid, point), tileCells(tile, grid)) === 0);
             if (tile) { arrival = point; break; }
         }
@@ -130,8 +131,9 @@ export async function runReinforcements(combat, services) {
         try {
             if (actor?.type !== "character") throw Error("Choose an existing character Actor for the reinforcement type.");
             const elevation = Number(tile.elevation ?? 0);
-            const template = await actor.getTokenDocument({actorLink: false, hidden: false, elevation}, {parent: scene});
-            const prototype = {width: template.width, height: template.height, elevation, actor, flags: template.flags};
+            const level = tile.levels?.values().next().value ?? scene.initialLevel?.id;
+            const template = await actor.getTokenDocument({actorLink: false, hidden: false, elevation, level}, {parent: scene});
+            const prototype = {width: template.width, height: template.height, elevation, level, actor, flags: template.flags};
             const count = Math.max(1, Math.min(99, Math.trunc(Number(flags.reinforcementCount ?? 1) || 1)));
             const positions = reinforcementPositions(tile, prototype, scene, grid, count);
             if (!positions.length) {

@@ -1,5 +1,8 @@
-#feue-terrain-tooltip { position: fixed; left: 230px; bottom: 155px; width: 265px; z-index: 60; pointer-events: none; padding: 12px 16px; color: #fdf5dd; border: 3px double #dec88c; border-radius: 9px; background: linear-gradient(135deg, #263b64ee, #12213bee); box-shadow: 0 3px 15px #000a; font: 14px var(--font-primary, sans-serif); }
+#feue-terrain-tooltip { position: fixed; left: 230px; bottom: 155px; width: 265px; max-width: calc(100vw - 16px); box-sizing: border-box; z-index: 60; pointer-events: auto; padding: 12px 16px; color: #fdf5dd; border: 3px double #dec88c; border-radius: 9px; background: linear-gradient(135deg, #263b64ee, #12213bee); box-shadow: 0 3px 15px #000a; font: 14px var(--font-primary, sans-serif); }
 #feue-terrain-tooltip[hidden] { display: none; }
+#feue-terrain-tooltip header { display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: grab; touch-action: none; user-select: none; }
+#feue-terrain-tooltip header i { font-size: 14px; opacity: .7; }
+#feue-terrain-tooltip.dragging header { cursor: grabbing; }
 #feue-terrain-tooltip strong { font-size: 20px; }
 #feue-terrain-tooltip p { margin: 6px 0 0; line-height: 1.35; }
 .feue-terrain-numbers { display: flex; gap: 24px; margin-top: 6px; font-weight: bold; color: #fff; }

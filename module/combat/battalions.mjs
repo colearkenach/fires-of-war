@@ -249,7 +249,7 @@ export async function resolveBattalion(sheet, item, options = {}) {
     await completeMajorAction(actor, {...options, sourceToken: source ?? options.sourceToken, attacked: results.length > 0});
     const rows = results.map(r => `<tr><td>${esc(r.token.name)}</td><td>${r.hitRoll} / ${r.hitChance}%</td><td>${r.hit ? r.crit ? "<b>CRIT</b>" : "HIT" : "MISS"}</td><td>${r.hit ? `${r.damage}${r.slayer > 1 ? " (Slayer)" : ""}` : "—"}</td></tr>`).join("");
     const empty = area && options.choice && !enemies.length && !allies.length ? "<p>No units in the area.</p>" : "";
-    await globalThis.ChatMessage?.create({user: options.userId ?? globalThis.game?.user?.id, speaker: ChatMessage.getSpeaker({actor}),
+    await globalThis.ChatMessage?.create({author: options.userId ?? globalThis.game?.user?.id, speaker: ChatMessage.getSpeaker({actor}),
         content: `<div class="feue-attack-roll feue-battalion-roll"><h3>${esc(actor.name)} orders ${esc(item.name)}!</h3>${area ? `<p><b>Area:</b> ${esc(area.label)}</p>` : ""}${stats.attacks ? `<p><b>Hit</b> ${stats.hit}% · <b>Crit</b> ${stats.crit}% · <b>Mt</b> ${stats.damage}</p>` : ""}${rows ? `<table class="feue-battalion-results"><tr><th>Target</th><th>Roll</th><th>Result</th><th>Damage</th></tr>${rows}</table>` : ""}${notes.length ? `<p><b>Effects:</b> ${notes.map(esc).join(" · ")}</p>` : ""}${empty}</div>`});
     return results;
 }

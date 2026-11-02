@@ -1,4 +1,4 @@
-import {eventFlags, tileCells, tokenCells, footprintDistance, unavailableUnit, placementReason, wallBlocks} from "./event-rules.mjs";
+import {eventFlags, tileCenter, tileCells, tokenCells, footprintDistance, unavailableUnit, placementReason, wallBlocks} from "./event-rules.mjs";
 import {cellKey} from "../map/tactical-grid.mjs";
 
 export function reinforcementTurns(value) {
@@ -20,9 +20,9 @@ export function reinforcementDue(tile, round) {
 /** One unit at the Tile's center square, extras one orthogonal space from its footprint. */
 export function reinforcementPositions(tile, token, scene, grid, count = 1) {
     const tileFootprint = tileCells(tile, grid);
-    if (Array.from(scene.tokens ?? []).some(other => !unavailableUnit(other) &&
+    if (Array.from(scene.tokens ?? []).some(other => !unavailableUnit(other) && (!token.level || other.locatedInLevel?.(token.level) !== false) &&
         footprintDistance(tileFootprint, tokenCells(other, grid)) === 0)) return [];
-    const anchor = grid.getTopLeftPoint(grid.getOffset({x: tile.x + tile.width / 2, y: tile.y + tile.height / 2}));
+    const anchor = grid.getTopLeftPoint(grid.getOffset(tileCenter(tile)));
     const elevation = Number(token.elevation ?? tile.elevation ?? 0);
     if (placementReason(token, anchor, scene, grid, {elevation})) return [];
     const base = {...token, ...anchor}, firstCells = tokenCells(base, grid), reserved = new Set(firstCells.map(cellKey));
@@ -37,7 +37,7 @@ export function reinforcementPositions(tile, token, scene, grid, count = 1) {
     candidates.sort((a, b) => Math.abs(a.x - anchor.x) + Math.abs(a.y - anchor.y) - Math.abs(b.x - anchor.x) - Math.abs(b.y - anchor.y) || a.y - b.y || a.x - b.x);
     for (const point of candidates) {
         if (positions.length >= count) break;
-        if (placementReason(token, point, scene, grid, {elevation, reserved}) || wallBlocks(scene, center(anchor), center(point))) continue;
+        if (placementReason(token, point, scene, grid, {elevation, reserved}) || wallBlocks(scene, center(anchor), center(point), token.level)) continue;
         positions.push(point);
         for (const cell of tokenCells(token, grid, point)) reserved.add(cellKey(cell));
     }

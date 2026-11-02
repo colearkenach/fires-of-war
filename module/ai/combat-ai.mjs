@@ -180,20 +180,23 @@ function singleStrikeStats(actor, means, target, sourceToken, targetToken) {
 
 /** Per-phase caches shared by every unit: terrain, solid Tiles and wall collisions do not change while the AI plans. */
 export function createRunCache(scene = canvas.scene, grid = gridOf()) {
-    const terrain = new Map(), walls = new Map();
+    const terrain = new Map(), walls = new Map(), tiles = new Map();
     return {
         scene, grid, rect: canvas.dimensions.sceneRect, bounds: grid.getOffsetRange(canvas.dimensions.sceneRect),
-        solid: solidTileCells(scene, grid),
-        terrain(cell, elevation = 0) {
-            const key = `${cellKey(cell)}:${elevation}`;
+        solid(level) {
+            if (!tiles.has(level)) tiles.set(level, solidTileCells(scene, grid, level));
+            return tiles.get(level);
+        },
+        terrain(cell, elevation = 0, level) {
+            const key = `${level}:${cellKey(cell)}:${elevation}`;
             if (!terrain.has(key)) {
                 const point = grid.getTopLeftPoint(cell);
-                terrain.set(key, terrainAt(scene, {x: point.x + grid.size / 2, y: point.y + grid.size / 2, elevation}));
+                terrain.set(key, terrainAt(scene, {x: point.x + grid.size / 2, y: point.y + grid.size / 2, elevation, level}));
             }
             return terrain.get(key);
         },
         blocked(token, from, to) {
-            const key = `${token.w}x${token.h}:${cellKey(from)}>${cellKey(to)}`;
+            const key = `${token.document.level}:${token.document.elevation}:${token.w}x${token.h}:${cellKey(from)}>${cellKey(to)}`;
             if (!walls.has(key)) {
                 const center = cell => { const point = grid.getTopLeftPoint(cell); return {x: point.x + token.w / 2, y: point.y + token.h / 2}; };
                 walls.set(key, !!token.checkCollision(center(to), {origin: center(from), type: "move", mode: "any"}));
@@ -227,7 +230,7 @@ export function planUnit(token, combat, cache) {
     const fixed = behavior === "stationary" || !!context.actionReason;
     const reachable = fixed ? [{...context.origin, cost: 0, path: [context.origin]}] : [...context.forecast.movementCells.values()];
     const side = unitAllegiance(doc, combat).id;
-    const others = liveUnits(combat, doc.parent).filter(unit => unit.tokenId !== doc.id);
+    const others = liveUnits(combat, doc.parent).filter(unit => unit.tokenId !== doc.id && (!doc.level || unit.token?.locatedInLevel?.(doc.level) !== false));
     const hostiles = others.filter(unit => !allied(allegianceOf(unit, combat).id, side));
     const friends = others.filter(unit => allied(allegianceOf(unit, combat).id, side));
     const threats = hostiles.map(unit => threatOf(unit, grid));
@@ -241,7 +244,7 @@ export function planUnit(token, combat, cache) {
     const consider = option => { if (Number.isFinite(option.score) && (!best || option.score > best.score)) best = option; };
     for (const cell of reachable) {
         const point = grid.getTopLeftPoint(cell), cells = tokenCells(doc, grid, point);
-        const terrain = terrainAt(doc.parent, {x: point.x + token.w / 2, y: point.y + token.h / 2, elevation: doc.elevation ?? 0});
+        const terrain = terrainAt(doc.parent, {x: point.x + token.w / 2, y: point.y + token.h / 2, elevation: doc.elevation ?? 0, level: doc.level});
         const cover = coverValue(terrain), threat = threatCount(cell, threats);
         let source = null;
         for (const target of targets) {
@@ -295,8 +298,8 @@ function approach(token, combat, cache, {context, reachable, targets, friends, p
         let extra = 0, enemy = false;
         for (let i = i0; i < i1; i++) for (let j = j0; j < j1; j++) {
             const key = cellKey({i, j});
-            if (cache.solid.has(key)) return Infinity;
-            const rule = terrainMovement(cache.terrain({i, j}, elevation).key, traits);
+            if (cache.solid(doc.level).has(key)) return Infinity;
+            const rule = terrainMovement(cache.terrain({i, j}, elevation, doc.level).key, traits);
             if (rule.blocked) return Infinity;
             extra = Math.max(extra, rule.extra);
             enemy ||= enemyCells.has(key);
@@ -306,7 +309,7 @@ function approach(token, combat, cache, {context, reachable, targets, friends, p
     };
     const field = approachField({goals, bounds: cache.bounds, enterCost, traverse: (from, to) => !cache.blocked(token, from, to), diagonal: diagonalStep(grid.diagonals)});
     const remaining = cell => field.get(cellKey(cell)) ?? Infinity;
-    const cover = cell => coverValue(cache.terrain(cell, elevation));
+    const cover = cell => coverValue(cache.terrain(cell, elevation, doc.level));
     let best = null;
     for (const cell of reachable) {
         const value = remaining(cell);

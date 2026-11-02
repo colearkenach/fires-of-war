@@ -7,10 +7,23 @@ import {hasSkill} from "../skills/skill-automation.mjs";
 /** The stored position. While a multi-waypoint move animates, Foundry v13 leaves the document's x/y at the
  * previous square until the animation ends, so later legs must be measured from the saved position. */
 export const storedPosition = doc => ({x: doc?._source?.x ?? doc?.x, y: doc?._source?.y ?? doc?.y,
-    elevation: doc?._source?.elevation ?? doc?.elevation ?? 0});
+    elevation: doc?._source?.elevation ?? doc?.elevation ?? 0, level: doc?._source?.level ?? doc?.level});
 
 /** Longest detour (in squares) searched around barriers when movement is unrestricted. */
 export const UNRESTRICTED_SEARCH = 250;
+
+export function orthogonalMovementPath(waypoints, movementAction) {
+    const path = waypoints.slice(0, 1);
+    for (let n = 1; n < waypoints.length; n++) {
+        const previous = path.at(-1), next = waypoints[n];
+        const action = next.action ?? previous.action ?? movementAction;
+        if (previous.x !== next.x && previous.y !== next.y && !CONFIG.Token.movement.actions[action]?.teleport) {
+            path.push({...previous, y: next.y, action, explicit: true, checkpoint: true, intermediate: false});
+        }
+        path.push(next);
+    }
+    return path;
+}
 
 export function nativeCellPath(document, waypoints, grid) {
     const complete = document.getCompleteMovementPath?.(waypoints) ??
@@ -42,6 +55,7 @@ export function createMovementContext(token, board, {combat = null, origin: from
         (!c.sceneId || c.sceneId === doc.parent?.id));
     const history = inCombat ? doc.movementHistory ?? [] : [];
     const measure = points => {
+        points = [...history, ...(token.createTerrainMovementPath?.(points, {preview: true}) ?? points)];
         if (token.measureMovementPath) return token.measureMovementPath(points, {preview: true}).cost / (grid.distance || 1);
         if (doc.measureMovementPath) return doc.measureMovementPath(points).cost / (grid.distance || 1);
         if (grid.measurePath) return grid.measurePath(points.map(point => ({x: point.x + token.w / 2, y: point.y + token.h / 2}))).distance / (grid.distance || 1);
@@ -55,12 +69,12 @@ export function createMovementContext(token, board, {combat = null, origin: from
         if (!terrainCache.has(key)) {
             const point = grid.getTopLeftPoint(cell);
             terrainCache.set(key, terrainAt(doc.parent ?? board.scene, {x: point.x + grid.size / 2,
-                y: point.y + grid.size / 2, elevation: at.elevation ?? doc.elevation ?? 0}));
+                y: point.y + grid.size / 2, elevation: at.elevation ?? doc.elevation ?? 0, level: at.level ?? doc.level}));
         }
         return terrainCache.get(key);
     };
     const pastCells = history.length > 1 ? nativeCellPath(doc, history, grid) : [];
-    const spent = history.length > 1 ? Math.max(0, measure(history) + terrainRouteState(pastCells, terrain, traits).extra) : 0;
+    const spent = history.length > 1 ? Math.max(0, measure([]) + terrainRouteState(pastCells, terrain, traits).extra) : 0;
     const actionReason = unitActionReason(token, {combat, movement: true});
     const unrestricted = !inCombat;
     // Open Field: +3 Move when the phase's movement starts on terrain without a movement penalty.
@@ -69,16 +83,17 @@ export function createMovementContext(token, board, {combat = null, origin: from
     const openField = hasSkill(token.actor, "open field") && !startRule.blocked && !startRule.extra ? 3 : 0;
     const allowance = actionReason ? 0 : unrestricted ? Infinity : Math.max(0, stats.movement + openField - spent);
     const waypoint = cell => ({...grid.getTopLeftPoint(cell), elevation: at.elevation ?? doc.elevation ?? 0,
-        width: doc.width, height: doc.height, shape: doc.shape, action: doc.movementAction,
+        width: doc.width, height: doc.height, depth: doc.depth, shape: doc.shape, level: at.level ?? doc.level, action: doc.movementAction,
         snapped: true, explicit: true, checkpoint: true});
     const center = cell => {
         const point = grid.getTopLeftPoint(cell);
         return {x: point.x + token.w / 2, y: point.y + token.h / 2};
     };
     const occupied = new Map();
-    const solid = solidTileCells(doc.parent?.tiles ? doc.parent : board.scene, grid);
+    const solid = solidTileCells(doc.parent?.tiles ? doc.parent : board.scene, grid, at.level ?? doc.level);
     for (const other of board.tokens.placeables) {
-        if (other === token || other.document.id && other.document.id === doc.id || other.destroyed || unavailableUnit(other)) continue;
+        if (other === token || other.document.id && other.document.id === doc.id || other.destroyed || unavailableUnit(other) ||
+            other.document.locatedInLevel?.(at.level ?? doc.level) === false) continue;
         const placed = storedPosition(other.document);
         const [i0, j0, i1, j1] = grid.getOffsetRange({x: placed.x, y: placed.y, width: other.w, height: other.h});
         const friendly = sameAllegiance(doc, other.document, combat);
@@ -99,12 +114,13 @@ export function createMovementContext(token, board, {combat = null, origin: from
         }
         return true;
     };
-    const canTraverse = (from, to) => !token.checkCollision(center(to), {origin: center(from), type: "move", mode: "any"});
+    const canTraverse = (from, to) => (grid.diagonals !== CONST.GRID_DIAGONALS.ILLEGAL || from.i === to.i || from.j === to.j) &&
+        !token.checkCollision(center(to), {origin: center(from), type: "move", mode: "any"});
     const fullCells = cells => pastCells.length ? [...pastCells, ...cells.slice(1)] : cells;
     const costRoute = cells => {
         if (unrestricted) return Math.max(0, cells.length - 1);
         const state = terrainRouteState(fullCells(cells), terrain, traits);
-        return state.valid ? Math.max(0, measure([...history, ...cells.map(waypoint)]) + state.extra) - spent : Infinity;
+        return state.valid ? Math.max(0, measure(cells.map(waypoint)) + state.extra) - spent : Infinity;
     };
     const validate = cells => {
         if (actionReason && cells.length > 1) return false;
@@ -135,7 +151,12 @@ export function createMovementContext(token, board, {combat = null, origin: from
     const route = destination => {
         if (actionReason || unrestricted && !canOccupy(destination, false)) return [];
         if (!unrestricted && !search().movementCells.has(cellKey(destination))) return [];
-        const direct = nativeCellPath(doc, [waypoint(origin), waypoint(destination)], grid);
+        const waypoints = [waypoint(origin)];
+        if (grid.diagonals === CONST.GRID_DIAGONALS.ILLEGAL && origin.i !== destination.i && origin.j !== destination.j) {
+            waypoints.push(waypoint({i: destination.i, j: origin.j}));
+        }
+        waypoints.push(waypoint(destination));
+        const direct = nativeCellPath(doc, waypoints, grid);
         if (validate(direct)) return direct;
         return search().movementCells.has(cellKey(destination)) ? routeToCell(search(), destination) : [];
     };

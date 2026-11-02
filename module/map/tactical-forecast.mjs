@@ -1,5 +1,5 @@
 import {cellKey} from "./tactical-grid.mjs";
-import {createMovementContext, nativeCellPath} from "./tactical-movement.mjs";
+import {createMovementContext, nativeCellPath, orthogonalMovementPath} from "./tactical-movement.mjs";
 import {unavailableUnit} from "../encounter/event-rules.mjs";
 import {unitActionReason} from "../units/unit-actions.mjs";
 
@@ -411,8 +411,22 @@ export function guardLegacyTacticalMovement(document, changed, options = {}) {
 }
 
 export function installTacticalTokenControls(controller) {
+    const ParentScene = CONFIG.Scene.documentClass;
+    CONFIG.Scene.documentClass = class FiresOfWarScene extends ParentScene {
+        prepareBaseData() {
+            super.prepareBaseData();
+            if (this.grid.isSquare && game.settings.get("fires-of-war", "disableDiagonalMovement")) this.grid.diagonals = CONST.GRID_DIAGONALS.ILLEGAL;
+        }
+    };
     const ParentToken = CONFIG.Token.objectClass;
     CONFIG.Token.objectClass = class FiresOfWarToken extends ParentToken {
+        findMovementPath(waypoints, options = {}) {
+            if (this.scene.grid.isSquare && game.settings.get("fires-of-war", "disableDiagonalMovement") && waypoints.length > 1) {
+                waypoints = orthogonalMovementPath(waypoints, this.document.movementAction);
+            }
+            return super.findMovementPath(waypoints, options);
+        }
+
         _onClickLeft2(event) {
             controller.cancelPlanning();
             return super._onClickLeft2(event);
@@ -430,6 +444,11 @@ export function installTacticalTokenControls(controller) {
         }
 
         _prepareDragLeftDropUpdates(event) {
+            if (this.scene.grid.isSquare && game.settings.get("fires-of-war", "disableDiagonalMovement")) {
+                for (const context of Object.values(event.interactionData.contexts ?? {})) {
+                    context.foundPath = orthogonalMovementPath(context.foundPath, context.token.document.movementAction);
+                }
+            }
             if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE && game.settings.get("fires-of-war", "enforceTacticalMovement")) {
                 for (const context of Object.values(event.interactionData.contexts ?? {})) {
                     if (context.token.actor?.type !== "character") continue;
@@ -487,6 +506,11 @@ export function registerTacticalForecast() {
         document.head.append(link);
     }
     Hooks.once("init", () => {
+        game.settings.register("fires-of-war", "disableDiagonalMovement", {
+            name: "Disable Diagonal Movement",
+            hint: "On square grids, move horizontally and vertically only. Reaching a diagonally adjacent square takes two steps. Turn this off to use Foundry's configured diagonal movement rules.",
+            scope: "world", config: true, type: Boolean, default: true, requiresReload: true
+        });
         game.settings.register("fires-of-war", "tacticalForecast", {
             name: "Fires of War Movement Forecast",
             hint: "Show movement tiles and a character HUD on hover or while moving. Select a unit, choose Move in the bottom command bar, then a blue square to move; Escape or right-click cancels. Outside an encounter only the route is drawn.",
@@ -506,7 +530,8 @@ export function registerTacticalForecast() {
         controller.queueRefresh();
     });
     for (const hook of ["canvasReady", "controlToken", "activateCanvasLayer", "drawToken", "updateToken", "createToken", "deleteToken",
-        "createWall", "updateWall", "deleteWall", "createRegion", "updateRegion", "deleteRegion", "createTile", "updateTile", "deleteTile", "sightRefresh", "updateScene", "updateCombat", "updateCombatant"]) {
+        "createWall", "updateWall", "deleteWall", "createRegion", "updateRegion", "deleteRegion", "createRegionBehavior", "updateRegionBehavior", "deleteRegionBehavior",
+        "createTile", "updateTile", "deleteTile", "sightRefresh", "updateScene", "updateCombat", "updateCombatant"]) {
         Hooks.on(hook, () => {
             if (controller.planning && !controller.planning.controlled) controller.planning = null;
             controller.queueRefresh();

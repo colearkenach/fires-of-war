@@ -71,12 +71,20 @@ export function tokenCells(token, grid, position = null) {
     return cells;
 }
 
+export function tileCenter(tile) {
+    const doc = docOf(tile), angle = Number(doc.rotation || 0) * Math.PI / 180;
+    const x = Math.abs(doc.width) * (0.5 - (doc.texture?.anchorX ?? 0));
+    const y = Math.abs(doc.height) * (0.5 - (doc.texture?.anchorY ?? 0));
+    return {x: doc.x + x * Math.cos(angle) - y * Math.sin(angle),
+        y: doc.y + x * Math.sin(angle) + y * Math.cos(angle)};
+}
+
 /** A rotated Tile blocks every square its rectangle overlaps (edge contact is not overlap). */
 export function tileCells(tile, grid) {
     const doc = docOf(tile), width = Math.abs(doc.width), height = Math.abs(doc.height);
     const angle = Number(doc.rotation || 0) * Math.PI / 180;
     const u = {x: Math.cos(angle), y: Math.sin(angle)}, v = {x: -u.y, y: u.x};
-    const center = {x: doc.x + width / 2, y: doc.y + height / 2};
+    const center = tileCenter(doc);
     const hx = (width * Math.abs(u.x) + height * Math.abs(v.x)) / 2;
     const hy = (width * Math.abs(u.y) + height * Math.abs(v.y)) / 2;
     const [i0, j0, i1, j1] = grid.getOffsetRange({x: center.x - hx, y: center.y - hy, width: hx * 2, height: hy * 2});
@@ -93,8 +101,8 @@ export function tileCells(tile, grid) {
     return cells;
 }
 
-export function solidTileCells(scene, grid) {
-    return new Set(Array.from(scene?.tiles ?? []).filter(tile => eventFlags(tile).solid)
+export function solidTileCells(scene, grid, level) {
+    return new Set(Array.from(scene?.tiles ?? []).filter(tile => eventFlags(tile).solid && (!level || tile.includedInLevel?.(level) !== false))
         .flatMap(tile => tileCells(tile, grid)).map(cellKey));
 }
 
@@ -123,6 +131,7 @@ export function interactionReason(source, target, action, grid, combat = null) {
     if (source?.actor?.type !== "character" || !interactEnabled(source) || unavailableUnit(source)) return "This unit cannot interact.";
     if (!target || target === source || target.id === source.id && target.documentName === source.documentName) return "Choose another object.";
     if (target.parent?.id !== source.parent?.id) return "The target is in another scene.";
+    if (source.level && target.locatedInLevel?.(source.level) === false) return "The target is on another level.";
     if (target.hidden) return "The target is hidden.";
     const unit = target.actor?.type === "character", flags = eventFlags(target);
     const distance = footprintDistance(tokenCells(source, grid), unit ? tokenCells(target, grid) : tileCells(target, grid));
@@ -164,6 +173,7 @@ export function nearbyInteractions(source, scene, grid, combat = null, {visible 
     if (!interactEnabled(source) || unavailableUnit(source)) return [];
     const sourceCells = tokenCells(source, grid), choices = [];
     for (const target of scene.tokens ?? []) {
+        if (source.level && target.locatedInLevel?.(source.level) === false) continue;
         if (target.id === source.id || target.actor?.type !== "character" || target.hidden || !visible(target) || unavailableUnit(target) || !interactEnabled(target)) continue;
         if (footprintDistance(sourceCells, tokenCells(target, grid)) !== 1) continue;
         const knockedOut = Number(target.actor.system.attributes?.hp?.value) <= 0 && hasKnockedOut(target.actor);
@@ -174,6 +184,7 @@ export function nearbyInteractions(source, scene, grid, combat = null, {visible 
         }
     }
     for (const target of scene.tiles ?? []) {
+        if (source.level && target.includedInLevel?.(source.level) === false) continue;
         const flags = eventFlags(target);
         if (!flags.interactable || target.hidden || !visible(target) || footprintDistance(sourceCells, tileCells(target, grid)) !== (flags.solid ? 1 : 0)) continue;
         if (flags.interactionType === "reinforcement") continue;
@@ -210,21 +221,23 @@ export function placementReason(target, position, scene, grid, {elevation = targ
     const rect = scene.dimensions?.sceneRect ?? {x: 0, y: 0, right: scene.width, bottom: scene.height};
     if (position.x < rect.x || position.y < rect.y || position.x + target.width * grid.size > rect.right ||
         position.y + target.height * grid.size > rect.bottom) return "That square is outside the scene.";
-    const solid = solidTileCells(scene, grid), traits = terrainTraits(target.actor, target);
+    const solid = solidTileCells(scene, grid, target.level), traits = terrainTraits(target.actor, target);
     for (const cell of cells) {
         if (reserved.has(cellKey(cell))) return "That square is occupied.";
         if (solid.has(cellKey(cell))) return "A solid Tile blocks that square.";
         const point = grid.getTopLeftPoint(cell);
         if (terrainMovement(terrainAt(scene, {x: point.x + grid.size / 2, y: point.y + grid.size / 2,
-            elevation}).key, traits).blocked) return "That terrain is impassable.";
+            elevation, level: target.level}).key, traits).blocked) return "That terrain is impassable.";
         if (Array.from(scene.tokens ?? []).some(other => other.id !== target.id && !unavailableUnit(other) &&
+            (!target.level || other.locatedInLevel?.(target.level) !== false) &&
             tokenCells(other, grid).some(c => cellKey(c) === cellKey(cell)))) return "That square is occupied.";
     }
     return "";
 }
 
-export function wallBlocks(scene, a, b) {
+export function wallBlocks(scene, a, b, level) {
     for (const wall of scene.walls ?? []) {
+        if (level && wall.includedInLevel?.(level) === false) continue;
         if (!wall.move || wall.door && wall.ds === 1) continue;
         const [x1, y1, x2, y2] = wall.c;
         const cross = (p, q, r) => (q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x);
@@ -242,7 +255,7 @@ export function dropReason(source, target, position, scene, grid) {
     if (reason) return reason;
     const a = {x: source.x + source.width * grid.size / 2, y: source.y + source.height * grid.size / 2};
     const b = {x: position.x + target.width * grid.size / 2, y: position.y + target.height * grid.size / 2};
-    return wallBlocks(scene, a, b) ? "A wall blocks that square." : "";
+    return wallBlocks(scene, a, b, source.level) ? "A wall blocks that square." : "";
 }
 
 export function dropPositions(source, target, scene, grid) {

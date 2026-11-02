@@ -4,6 +4,7 @@ export const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&": 
 export const rootElement = html => html?.querySelector ? html : html?.[0];
 
 export function registerTerrainUI() {
+    Hooks.once("init", () => game.settings.register(SYSTEM_ID, "terrainIndicatorPosition", {scope: "client", config: false, type: Object, default: {}}));
     Hooks.on("renderRegionConfig", (app, html) => {
         const root = rootElement(html), doc = app.document ?? app.object;
         const target = root?.querySelector('.tab[data-tab="identity"]') ?? root?.querySelector("form") ?? root;
@@ -37,11 +38,48 @@ export function registerTerrainUI() {
             <option value="outdoor" ${indoor ? "" : "selected"}>Outdoor</option><option value="indoor" ${indoor ? "selected" : ""}>Indoor</option></select></div>
             <p class="hint">Skills such as Outdoor Fighter only apply on outdoor maps.</p></fieldset>`);
     });
-    let stage, element, pointer;
-    const clear = () => { stage?.off("pointermove", move); stage?.off("pointerleave", hide); stage = null; element?.remove(); element = null; pointer = null; };
+    let stage, board, element, pointer, position, drag;
+    const clear = () => {
+        stage?.off("pointermove", move);
+        board?.removeEventListener("pointerleave", leave);
+        window.removeEventListener("resize", place);
+        stopDrag();
+        element?.remove();
+        stage = board = element = pointer = null;
+    };
     const hide = () => { if (element) element.hidden = true; pointer = null; };
+    function leave(event) {
+        if (drag || element?.contains(event.relatedTarget) || event.relatedTarget === board) return;
+        hide();
+    }
+    function place() {
+        if (!element || element.hidden || !position) return;
+        const rect = element.getBoundingClientRect();
+        position.left = Math.max(0, Math.min(position.left, window.innerWidth - rect.width));
+        position.top = Math.max(0, Math.min(position.top, window.innerHeight - rect.height));
+        Object.assign(element.style, {left: `${position.left}px`, top: `${position.top}px`, bottom: "auto"});
+    }
+    function dragMove(event) {
+        if (!drag || event.pointerId !== drag.id) return;
+        event.preventDefault();
+        position = {left: drag.left + event.clientX - drag.x, top: drag.top + event.clientY - drag.y};
+        place();
+    }
+    function stopDrag() {
+        window.removeEventListener("pointermove", dragMove);
+        window.removeEventListener("pointerup", dragEnd);
+        window.removeEventListener("pointercancel", dragEnd);
+        drag = null;
+        element?.classList.remove("dragging");
+    }
+    function dragEnd(event) {
+        if (!drag || event.pointerId !== drag.id) return;
+        stopDrag();
+        void game.settings.set(SYSTEM_ID, "terrainIndicatorPosition", {...position})
+            .catch(error => console.error("FEUE | Could not save terrain indicator position", error));
+    }
     const refresh = () => {
-        if (!pointer || !canvas.ready || !element) return;
+        if (!pointer || !canvas.ready || !element || drag) return;
         const grid = canvas.grid?.getOffset ? canvas.grid : canvas.grid?.grid;
         const rect = canvas.dimensions.sceneRect;
         if (pointer.x < rect.x || pointer.y < rect.y || pointer.x >= rect.right || pointer.y >= rect.bottom) return hide();
@@ -51,21 +89,44 @@ export function registerTerrainUI() {
             point = {x: point.x + grid.size / 2, y: point.y + grid.size / 2};
         }
         const token = canvas.tokens?.controlled?.at(-1);
-        const terrain = terrainAt(canvas.scene, {...point, elevation: token?.document.elevation ?? 0});
-        element.innerHTML = `<strong>${esc(terrain.name)}</strong><div class="feue-terrain-numbers"><span>DEF ${terrain.defense >= 0 ? "+" : ""}${terrain.defense}</span><span>AVO +${terrain.avoid}%</span></div><p>${esc(terrain.text)}</p>`;
+        const terrain = terrainAt(canvas.scene, {...point, elevation: token?.document.elevation ?? 0, level: token?.document.level ?? canvas.level?.id});
+        element.querySelector("strong").textContent = terrain.name;
+        element.querySelector(".feue-terrain-content").innerHTML = `<div class="feue-terrain-numbers"><span>DEF ${terrain.defense >= 0 ? "+" : ""}${terrain.defense}</span><span>AVO +${terrain.avoid}%</span></div><p>${esc(terrain.text)}</p>`;
         element.hidden = false;
+        place();
     };
     function move(event) { pointer = event.getLocalPosition(canvas.stage); refresh(); }
     Hooks.on("canvasReady", () => {
         clear();
         stage = canvas.stage;
+        board = canvas.app.view;
+        const saved = game.settings.get(SYSTEM_ID, "terrainIndicatorPosition");
+        position = Number.isFinite(saved.left) && Number.isFinite(saved.top) ? {left: saved.left, top: saved.top} : null;
         element = document.createElement("aside");
         element.id = "feue-terrain-tooltip";
         element.hidden = true;
         element.setAttribute("aria-label", "Terrain under pointer");
+        element.innerHTML = '<header title="Drag to reposition"><strong>Terrain</strong><i class="fas fa-grip" aria-hidden="true"></i></header><div class="feue-terrain-content"></div>';
+        const header = element.querySelector("header");
+        header.addEventListener("pointerdown", event => {
+            if (event.button !== 0 || drag) return;
+            event.preventDefault();
+            event.stopPropagation();
+            const rect = element.getBoundingClientRect();
+            position = {left: rect.left, top: rect.top};
+            drag = {id: event.pointerId, x: event.clientX, y: event.clientY, ...position};
+            element.classList.add("dragging");
+            window.addEventListener("pointermove", dragMove);
+            window.addEventListener("pointerup", dragEnd);
+            window.addEventListener("pointercancel", dragEnd);
+            header.setPointerCapture(event.pointerId);
+        });
+        header.addEventListener("lostpointercapture", dragEnd);
+        element.addEventListener("pointerleave", leave);
         document.body.append(element);
         stage.on("pointermove", move);
-        stage.on("pointerleave", hide);
+        board.addEventListener("pointerleave", leave);
+        window.addEventListener("resize", place);
     });
     for (const hook of ["createRegion", "updateRegion", "deleteRegion", "controlToken"]) Hooks.on(hook, refresh);
     Hooks.on("canvasTearDown", clear);

@@ -134,7 +134,7 @@ export async function useActiveSkill(sheet, item, options = {}) {
     if (singleTarget(rule) && !chosen.length) throw Error("The chosen unit is no longer a valid target.");
     const summary = await resolveActiveSkill(sheet, item, rule, source, chosen, options);
     await completeMajorAction(actor, {sourceToken: source});
-    await ChatMessage.create({user: options.userId ?? game.user.id, speaker: ChatMessage.getSpeaker({actor}),
+    await ChatMessage.create({author: options.userId ?? game.user.id, speaker: ChatMessage.getSpeaker({actor}),
         content: `<div class="feue-skill-use"><h3>${esc(actor.name)} uses ${esc(item.name)}</h3><p>${summary}</p></div>`});
     return true;
 }

@@ -15,7 +15,7 @@ export const mountUnitActor = actor => {
 
 /** First free square orthogonally adjacent to the rider (walls, solid Tiles, terrain and units respected). */
 export function mountSquare(rider, mountActor, scene, grid) {
-    const size = grid.size, probe = {id: null, width: 1, height: 1, elevation: rider.elevation ?? 0, actor: mountActor, flags: {}};
+    const size = grid.size, probe = {id: null, width: 1, height: 1, elevation: rider.elevation ?? 0, level: rider.level, actor: mountActor, flags: {}};
     const [i0, j0, i1, j1] = grid.getOffsetRange({x: rider.x, y: rider.y, width: rider.width * size, height: rider.height * size});
     const candidates = [];
     for (let i = i0; i < i1; i++) candidates.push({i, j: j0 - 1}, {i, j: j1});
@@ -24,7 +24,7 @@ export function mountSquare(rider, mountActor, scene, grid) {
     for (const cell of candidates) {
         const point = grid.getTopLeftPoint(cell);
         if (placementReason(probe, point, scene, grid)) continue;
-        if (wallBlocks(scene, {x: rider.x + rider.width * size / 2, y: rider.y + rider.height * size / 2}, center(point))) continue;
+        if (wallBlocks(scene, {x: rider.x + rider.width * size / 2, y: rider.y + rider.height * size / 2}, center(point), rider.level)) continue;
         return point;
     }
     return null;
@@ -38,7 +38,7 @@ export async function releaseMountUnit(rider, actor) {
     const scene = rider.parent, grid = gridOf(scene);
     const point = mountSquare(rider, mountActor, scene, grid);
     if (!point) throw Error("There is no free adjacent square for the mount to stand on.");
-    const data = (await mountActor.getTokenDocument({...point, elevation: rider.elevation ?? 0, disposition: rider.disposition, hidden: rider.hidden,
+    const data = (await mountActor.getTokenDocument({...point, elevation: rider.elevation ?? 0, level: rider.level, disposition: rider.disposition, hidden: rider.hidden,
         actorLink: false, flags: {[SYSTEM]: {mountOf: rider.id}}})).toObject();
     const [token] = await scene.createEmbeddedDocuments("Token", [data]);
     if (!token) throw Error("The mount unit could not be placed.");
@@ -59,7 +59,7 @@ export async function recallMountUnit(rider) {
     if (!mount) { await rider.update({[`flags.${SYSTEM}.-=mountTokenId`]: null}); return true; }
     if (Number(mount.actor?.system?.attributes?.hp?.value) <= 0) throw Error("The mount has fallen; equip a new mount to remount.");
     const grid = gridOf(scene);
-    if (footprintDistance(tokenCells(rider, grid), tokenCells(mount, grid)) !== 1) throw Error(`${mount.name} must be adjacent to remount.`);
+    if (mount.locatedInLevel?.(rider.level) === false || footprintDistance(tokenCells(rider, grid), tokenCells(mount, grid)) !== 1) throw Error(`${mount.name} must be adjacent to remount.`);
     for (const combat of globalThis.game?.combats ?? []) {
         const ids = Array.from(combat.combatants ?? []).filter(unit => unit.tokenId === mount.id).map(unit => unit.id);
         if (ids.length) await combat.deleteEmbeddedDocuments("Combatant", ids);

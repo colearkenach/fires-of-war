@@ -24,6 +24,11 @@
     border-radius: 3px;
 }
 
+:is(.feue.character, .feue.sheet.item, .feue.party, .feue.shop, .feue-gba-dialog, .feue-promo-editor, .feue-catalog-picker) select {
+    --color-select-option-bg: #12234a;
+    color-scheme: dark;
+}
+
 .feue.character .window-header, .feue.sheet.item .window-header, .feue:is(.party, .shop) .window-header, .feue-gba-dialog .window-header {
     background: #101a32;
     border-bottom: 1px solid #8f956e;

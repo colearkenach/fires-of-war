@@ -56,8 +56,8 @@ const queues = new Map();
 /** Create or delete condition icons until they match the unit's live conditions. Calls for one actor run in order. */
 export function syncConditionIcons(actor) {
     if (!actor?.uuid) return Promise.resolve();
-    const run = (queues.get(actor.uuid) ?? Promise.resolve()).then(() => reconcile(actor))
-        .catch(error => console.error(`FEUE | Could not update ${actor.name}'s condition icons`, error));
+    const run = (queues.get(actor.uuid) ?? Promise.resolve()).then(() => reconcile(actor)).then(() => true)
+        .catch(error => { console.error(`FEUE | Could not update ${actor.name}'s condition icons`, error); return false; });
     queues.set(actor.uuid, run);
     void run.then(() => { if (queues.get(actor.uuid) === run) queues.delete(actor.uuid); });
     return run;
@@ -98,36 +98,37 @@ function describeHudConditions(hud, element) {
 async function migrateActor(actor) {
     const current = activeConditionIds(actor), adopted = [], legacy = [];
     for (const effect of actor.effects ?? []) {
-        if (effect.statuses?.size !== 1 || effect.changes?.length) continue;
+        if (effect.statuses?.size !== 1 || effect.system?.changes?.length) continue;
         const [id] = effect.statuses, key = conditionForStatus(id);
         if (key) { if (!current.has(id) && !adopted.includes(key) && !statusImmune(actor, key)) adopted.push(key); }
-        else if (coreStatusIds.has(id) && !CONFIG.statusEffects.some(status => status.id === id)) legacy.push(effect.id);
+        else if (coreStatusIds.has(id) && !CONFIG.statusEffects[id]) legacy.push(effect.id);
     }
     if (legacy.length) await actor.deleteEmbeddedDocuments("ActiveEffect", legacy, SYNC);
     if (adopted.length) {
         const kept = (actor.system.statusEffects ?? []).filter(effect => !adopted.includes(statusKey(effect)));
         await actor.update({"system.statusEffects": [...kept, ...adopted.map(key => conditionEntry(key))]});
     }
-    await syncConditionIcons(actor);
+    if (!await syncConditionIcons(actor)) throw Error("Condition icon synchronization failed");
 }
 async function migrateWorld() {
     if (Number(game.settings.get(SYSTEM, "conditionIconsVersion")) >= MIGRATION_VERSION) return;
     const characters = actors => Array.from(actors).filter(actor => actor?.type === "character");
     const unlinked = Array.from(game.scenes ?? []).flatMap(scene => Array.from(scene.tokens ?? []).filter(token => !token.actorLink).map(token => token.actor));
     // Base actors first, so unlinked tokens already inherit their updated icons.
+    let failed = false;
     for (const actor of [...characters(game.actors ?? []), ...characters(unlinked)]) {
         try { await migrateActor(actor); }
-        catch (error) { console.error(`FEUE | Could not migrate ${actor.name}'s status icons`, error); }
+        catch (error) { failed = true; console.error(`FEUE | Could not migrate ${actor.name}'s status icons`, error); }
     }
-    await game.settings.set(SYSTEM, "conditionIconsVersion", MIGRATION_VERSION);
+    if (!failed) await game.settings.set(SYSTEM, "conditionIconsVersion", MIGRATION_VERSION);
 }
 
 export function registerConditions() {
     Hooks.once("init", () => {
         game.settings.register(SYSTEM, "conditionIconsVersion", {scope: "world", config: false, type: Number, default: 0});
-        coreStatusIds = new Set(CONFIG.statusEffects.map(status => status.id));
-        const dead = CONFIG.statusEffects.find(status => status.id === DEAD_STATUS) ?? {id: DEAD_STATUS, name: "EFFECT.StatusDead", img: "icons/svg/skull.svg"};
-        CONFIG.statusEffects = [dead, ...conditionStatusEffects()];
+        coreStatusIds = new Set(Object.values(CONFIG.statusEffects).map(status => status.id));
+        const dead = CONFIG.statusEffects[DEAD_STATUS] ?? {id: DEAD_STATUS, name: "EFFECT.StatusDead", img: "icons/svg/skull.svg"};
+        CONFIG.statusEffects = Object.fromEntries([dead, ...conditionStatusEffects()].map(status => [status.id, status]));
     });
     Hooks.once("ready", () => {
         if (game.user.isActiveGM) void migrateWorld().catch(error => console.error("FEUE | Status icon migration failed", error));

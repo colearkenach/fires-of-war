@@ -38,16 +38,16 @@ const requireUpdated = result => { if (!result || Array.isArray(result) && !resu
 /** Internal displacements must neither spend Move nor be constrained by the carried unit's range. */
 async function updateTokens(scene, changes) {
     const movement = {};
-    for (const change of changes) if ("x" in change || "y" in change || "elevation" in change) {
+    for (const change of changes) if ("x" in change || "y" in change || "elevation" in change || "level" in change) {
         const token = scene.tokens.get(change._id);
         movement[change._id] = {method: "api", waypoints: [{x: change.x ?? token.x, y: change.y ?? token.y,
-            elevation: change.elevation ?? token.elevation, action: "displace"}],
+            elevation: change.elevation ?? token.elevation, level: change.level ?? token.level, action: "displace"}],
             constrainOptions: {ignoreWalls: true, ignoreCost: true}};
     }
     const updated = requireUpdated(await scene.updateEmbeddedDocuments("Token", changes, {feueInteraction: true, animate: false, movement}));
     for (const change of changes) {
         const doc = updated.find(token => token.id === change._id);
-        if (!doc || ["x", "y", "elevation"].some(key => key in change && doc[key] !== change[key])) throw Error("A token update was rejected.");
+        if (!doc || ["x", "y", "elevation", "level"].some(key => key in change && doc[key] !== change[key])) throw Error("A token update was rejected.");
     }
     return updated;
 }
@@ -64,16 +64,16 @@ async function dropUnit(source, position, {force = false} = {}) {
     if (!target || eventFlags(target).rescuedBy !== source.id) throw Error("The carried unit is no longer available.");
     const reason = force ? "" : dropReason(source, target, position, scene, interactionGrid(scene));
     if (reason) throw Error(reason);
-    const before = {x: target.x, y: target.y, elevation: target.elevation, hidden: target.hidden,
+    const before = {x: target.x, y: target.y, elevation: target.elevation, level: target.level, hidden: target.hidden,
         wasHidden: eventFlags(target).rescueWasHidden, captured: eventFlags(target).captured ?? null};
     try {
         await updateTokens(scene, [{_id: source.id, [`flags.${SYSTEM_ID}.rescuedTokenId`]: null},
-            {_id: target.id, ...position, elevation: source.elevation, hidden: !!before.wasHidden,
+            {_id: target.id, ...position, elevation: source.elevation, level: source.level, hidden: !!before.wasHidden,
                 [`flags.${SYSTEM_ID}.rescuedBy`]: null, [`flags.${SYSTEM_ID}.rescueWasHidden`]: null, [`flags.${SYSTEM_ID}.captured`]: null}]);
     } catch (error) {
         try {
             await updateTokens(scene, [{_id: source.id, [`flags.${SYSTEM_ID}.rescuedTokenId`]: target.id},
-                {_id: target.id, x: before.x, y: before.y, elevation: before.elevation, hidden: before.hidden,
+                {_id: target.id, x: before.x, y: before.y, elevation: before.elevation, level: before.level, hidden: before.hidden,
                     [`flags.${SYSTEM_ID}.rescuedBy`]: source.id, [`flags.${SYSTEM_ID}.rescueWasHidden`]: before.wasHidden, [`flags.${SYSTEM_ID}.captured`]: before.captured}]);
         } catch (rollbackError) { console.error("FEUE | Drop rollback failed", rollbackError); }
         throw error;
@@ -101,7 +101,7 @@ export async function captureUnit(source, target) {
     requireUpdated(await source.actor.update({"system.rescue.active": true}, {feueInteraction: true}));
     try {
         await updateTokens(scene, [{_id: source.id, [`flags.${SYSTEM_ID}.rescuedTokenId`]: target.id},
-            {_id: target.id, x: source.x, y: source.y, elevation: source.elevation, hidden: true,
+            {_id: target.id, x: source.x, y: source.y, elevation: source.elevation, level: source.level, hidden: true,
                 [`flags.${SYSTEM_ID}.rescuedBy`]: source.id, [`flags.${SYSTEM_ID}.rescueWasHidden`]: !!target.hidden,
                 [`flags.${SYSTEM_ID}.captured`]: {by: source.id, combat: combat?.id ?? null, round: combat?.started ? combat.round : 0, overweight}}]);
     } catch (error) {
@@ -228,11 +228,11 @@ async function executeInteractionAction(request, user) {
             }
         } else if (request.action === "rescue") {
             const wasActive = !!source.actor.system.rescue?.active;
-            const before = {x: target.x, y: target.y, elevation: target.elevation, hidden: target.hidden};
+            const before = {x: target.x, y: target.y, elevation: target.elevation, level: target.level, hidden: target.hidden};
             requireUpdated(await source.actor.update({"system.rescue.active": true}, {feueInteraction: true}));
             try {
                 await updateTokens(scene, [{_id: source.id, [`flags.${SYSTEM_ID}.rescuedTokenId`]: target.id},
-                    {_id: target.id, x: source.x, y: source.y, elevation: source.elevation, hidden: true,
+                    {_id: target.id, x: source.x, y: source.y, elevation: source.elevation, level: source.level, hidden: true,
                         [`flags.${SYSTEM_ID}.rescuedBy`]: source.id, [`flags.${SYSTEM_ID}.rescueWasHidden`]: !!target.hidden}]);
             } catch (error) {
                 try {
@@ -365,8 +365,8 @@ export async function reconcileRescues(scene) {
                     await source.actor.update({"system.rescue.active": true}, {feueInteraction: true});
                     ui.notifications.warn(`${source.name} cannot stop rescuing until an adjacent drop square is free.`);
                 }
-            } else if (target.x !== source.x || target.y !== source.y || target.elevation !== source.elevation || !target.hidden) {
-                await updateTokens(scene, [{_id: target.id, x: source.x, y: source.y, elevation: source.elevation, hidden: true}]);
+            } else if (target.x !== source.x || target.y !== source.y || target.elevation !== source.elevation || target.level !== source.level || !target.hidden) {
+                await updateTokens(scene, [{_id: target.id, x: source.x, y: source.y, elevation: source.elevation, level: source.level, hidden: true}]);
             }
         }
         const carrierId = eventFlags(source).rescuedBy;
@@ -379,7 +379,7 @@ export async function reconcileRescues(scene) {
 
 export function guardCarriedMovement(doc, changed, options = {}) {
     if (unavailableUnit(doc) && !(game.user.isGM && options.feueInteraction) &&
-        (!game.user.isGM || !options.isUndo) && ["x", "y", "elevation"].some(key => key in changed)) {
+        (!game.user.isGM || !options.isUndo) && ["x", "y", "elevation", "level"].some(key => key in changed)) {
         ui.notifications.warn(isEscaped(doc) ? "This unit has escaped the encounter." : "A rescued unit moves with its rescuer. Drop it first.");
         return false;
     }

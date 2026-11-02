@@ -1,6 +1,7 @@
 // Fires of War system for Foundry VTT
 // Clean rewrite without sanitizers
 
+import {registerDataModels} from "./module/data/models.mjs";
 import {
     WEAPON_RANK_ORDER,
     canBuyOffClassWeaponRank,
@@ -868,7 +869,7 @@ class FiresOfWarActor extends Actor {
 
         const gainList = gainedStats.map(([k, v]) => `<span class="gain">+${v} ${FEUE.STAT_LABELS[k] || k}</span>`);
         if (game.settings.get("fires-of-war", "levelUpChat")) ChatMessage.create({
-            user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this }),
+            author: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this }),
             content: `<div class="feue-levelup"><h3>${this.name} reached level ${newLevel}!</h3>${gainList.length ? `<div class="stat-gains">${gainList.join("")}</div>` : "<p>No stats increased.</p>"}<details><summary>Roll Details</summary><table class="feue-gr-table"><tr><th>Stat</th><th>Roll</th><th>GR</th><th>Result</th></tr>${detailRows}</table></details></div>`
         });
 
@@ -947,7 +948,7 @@ class FiresOfWarActor extends Actor {
                 "system.totalLevel": (this.system.totalLevel || currentLevel) + 1
             });
             if (game.settings.get("fires-of-war", "levelUpChat")) ChatMessage.create({
-                user: game.user.id,
+                author: game.user.id,
                 speaker: ChatMessage.getSpeaker({ actor: this }),
                 content: `<div class="feue-levelup"><h3>${this.name} promoted to ${chosen.name} at level ${newLevel}${using}!</h3></div>`
             });
@@ -959,7 +960,7 @@ class FiresOfWarActor extends Actor {
                 "system.totalLevel": (this.system.totalLevel || prevLevel) + (levelUp ? 1 : 0)
             });
             if (game.settings.get("fires-of-war", "levelUpChat")) ChatMessage.create({
-                user: game.user.id,
+                author: game.user.id,
                 speaker: ChatMessage.getSpeaker({ actor: this }),
                 content: `<div class="feue-levelup"><h3>${this.name} promoted to ${chosen.name}${using}!</h3><p>Level reset to 1.</p></div>`
             });
@@ -1245,7 +1246,7 @@ class FiresOfWarActor extends Actor {
         if (item) await consumeClassChangeItem(item);
 
         ChatMessage.create({
-            user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this }),
+            author: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this }),
             content: `<div class="feue-levelup"><h3>${this.name} reclassed to ${target.name}${item ? ` using ${esc(item.name)}` : ""}!</h3><p>Stats and weapon ranks preserved.</p></div>`
         });
         return true;
@@ -1270,7 +1271,7 @@ class FiresOfWarActor extends Actor {
         });
 
         ChatMessage.create({
-            user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this }),
+            author: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this }),
             content: `<div class="feue-level-reset"><h3>${this.name} — Level Reset!</h3><p>Level, Total Level, EXP, and all level-up stat bonuses have been reset.</p></div>`
         });
         ui.notifications.info(`${this.name} has been reset to Level 1.`);
@@ -1379,7 +1380,7 @@ class FiresOfWarActor extends Actor {
 // ====================================================================
 // 3. ACTOR SHEET
 // ====================================================================
-class FiresOfWarCharacterSheet extends ActorSheet {
+class FiresOfWarCharacterSheet extends foundry.appv1.sheets.ActorSheet {
     async _updateObject(event, formData) {
         // Current Movement is displayed after Rescue. Preserve the raw value when
         // submitting another field, and convert intentional edits back to base units.
@@ -1580,7 +1581,7 @@ class FiresOfWarCharacterSheet extends ActorSheet {
             return {idx, name: effect?.name ?? effect, img: rule ? CONDITION_ICONS[key] : "", duration: effect?.duration, tooltip: parts.length ? tooltipAttributes(breakdownHtml({title: effect?.name ?? effect, total: "", notes: parts})) : ""};
         });
         // Dead is Foundry's own token status; it is listed here too and lasts until removed.
-        if (this.actor.statuses?.has(DEAD_STATUS)) data.statusEntries.unshift({dead: true, name: "Dead", img: CONFIG.statusEffects.find(s => s.id === DEAD_STATUS)?.img ?? "icons/svg/skull.svg",
+        if (this.actor.statuses?.has(DEAD_STATUS)) data.statusEntries.unshift({dead: true, name: "Dead", img: CONFIG.statusEffects[DEAD_STATUS]?.img ?? "icons/svg/skull.svg",
             tooltip: tooltipAttributes(breakdownHtml({title: "Dead", total: "", notes: ["Slain: defeated in the encounter. Lasts until removed."]}))});
 
         // Stable rules-order stat rows with readable labels.
@@ -1722,6 +1723,19 @@ class FiresOfWarCharacterSheet extends ActorSheet {
         return super._onDropItem(event, data);
     }
 
+    async _onDropItemCreate(itemData, event) {
+        const equipClass = !this.actor.items.some(i => i.type === "class" && i.system.equipped);
+        const items = await super._onDropItemCreate(itemData, event);
+        const classItem = equipClass ? items.find(i => i.type === "class") : null;
+        if (classItem) {
+            await classItem.update({ "system.equipped": true });
+            const node = this.actor._getCurrentClassNode(classItem);
+            await this.actor._syncClassProfile(node);
+            await this.actor._grantClassSkills(node, { upToLevel: this.actor.system.level || 1 });
+        }
+        return items;
+    }
+
     _disableFields(form) {
         super._disableFields(form);
         // Foundry disables all buttons for observers, including navigation.
@@ -1805,7 +1819,7 @@ class FiresOfWarCharacterSheet extends ActorSheet {
             const reduced = Math.max(0, cur - roll.total);
             await this.actor.update({ "system.fatigue.value": reduced });
             ChatMessage.create({
-                user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+                author: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }),
                 content: `<div class="feue-levelup"><h3>${this.actor.name} rested!</h3><p>Fatigue reduced by ${roll.total} (${cur} → ${reduced}).</p></div>`
             });
         });
@@ -2177,7 +2191,7 @@ class FiresOfWarCharacterSheet extends ActorSheet {
         const success = isSuccessfulTraitRoll(roll.total, tn);
         const traitLabel = hasRelevantTrait ? traitName.trim() : "No Relevant Trait";
         await ChatMessage.create({
-            user: game.user.id,
+            author: game.user.id,
             speaker: ChatMessage.getSpeaker({ actor: this.actor }),
             rolls: [roll],
             content: `<div class="feue-trait-check ${success ? "success" : "failure"}">
@@ -2596,7 +2610,7 @@ class FiresOfWarCharacterSheet extends ActorSheet {
             : "";
         const hitTip = breakdownHtml({title: "Hit chance", total: Math.min(100, s.netHit), suffix: "%", terms: [...s.breakdown.hit.terms, term(`${target?.name ?? "Target"} Avoid`, -s.tAvo)]});
         await ChatMessage.create({
-            user: userId, speaker: ChatMessage.getSpeaker({ actor: a }),
+            author: userId, speaker: ChatMessage.getSpeaker({ actor: a }),
             content: `<div class="feue-attack-roll feue-battle-roll"><div class="feue-battle-roll-heading">${_escapeTokenActionHtml(strikeLabel)}</div><h3>${_escapeTokenActionHtml(a.name)} → ${_escapeTokenActionHtml(target?.name || "No target")}</h3><div class="feue-battle-roll-weapon">${_escapeTokenActionHtml(weapon.name)}</div>${penaltyNote}${triNoteHtml}${propNoteHtml}${targetNote}${fateNote}${skillNotes.length ? `<p><b>Skills:</b> ${skillNotes.map(_escapeTokenActionHtml).join(" · ")}</p>` : ""}${passiveNotes.length ? `<p class="feue-passive-skills"><b>Passive:</b> ${passiveNotes.map(_escapeTokenActionHtml).join(" · ")}</p>` : ""}<div class="feue-battle-result ${hit ? crit ? "critical" : "hit" : "miss"}">${hit ? crit ? "CRITICAL HIT" : "HIT" : "MISS"}<span ${tooltipAttributes(hitTip)}>${hR.total} / ${Math.min(100, s.netHit)}%</span></div>${dmgLine}${effects.shadeNote}${effects.absorbNote}${effects.cursedNote}${effects.effectNote || ""}<p><b>Range:</b> ${_escapeTokenActionHtml(weapon.system.range)}</p></div>`
         });
         return {actor: a, target, weapon, hit, crit, damage: hit ? fd : 0, backfire: effects.backfire, killed: effects.killed};
@@ -2871,7 +2885,7 @@ class FiresOfWarCharacterSheet extends ActorSheet {
         const healed = hit ? await healActor(target, healing) : 0;
         if (hit && !spell && hasSkill(caster, "live to serve")) await healActor(caster, healed);
         await completeMajorAction(caster, options);
-        await ChatMessage.create({user: options.userId ?? game.user.id, speaker: ChatMessage.getSpeaker({actor: caster}), content: `<p><b>${_escapeTokenActionHtml(caster.name)}</b> uses <b>${_escapeTokenActionHtml(item.name)}</b> on ${_escapeTokenActionHtml(target.name)}: ${hit ? `${healed} HP restored` : "Miss"}.</p>`});
+        await ChatMessage.create({author: options.userId ?? game.user.id, speaker: ChatMessage.getSpeaker({actor: caster}), content: `<p><b>${_escapeTokenActionHtml(caster.name)}</b> uses <b>${_escapeTokenActionHtml(item.name)}</b> on ${_escapeTokenActionHtml(target.name)}: ${hit ? `${healed} HP restored` : "Miss"}.</p>`});
         return {hit, healed};
     }
 
@@ -2914,7 +2928,7 @@ class FiresOfWarCharacterSheet extends ActorSheet {
                     ? `${statLabel} (${target}%)`
                     : `${statLabel} × ${multiplier} (${target}%)`;
             await ChatMessage.create({
-                user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+                author: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }),
                 content: `<div class="feue-skill-activation"><h3>${this.actor.name} — ${skill.name}</h3><p><b>Activation:</b> rolled ${total} vs ${desc} — <b>${success ? "ACTIVATED" : "failed"}</b></p>${success && s.activation ? `<p><b>Effect:</b> ${s.activation}</p>` : ""}</div>`
             });
         }
@@ -2957,7 +2971,7 @@ class FiresOfWarCharacterSheet extends ActorSheet {
         const relay = relaySheetAction(this.actor, "skill", skill, options);
         if (relay) return relay;
         await ChatMessage.create({
-            user: game.user.id,
+            author: game.user.id,
             speaker: ChatMessage.getSpeaker({ actor: this.actor }),
             content: `<div class="feue-skill-use"><h3>${this.actor.name} activates ${skill.name}!</h3><p><b>Type:</b> ${skill.system.skillType}</p>${skill.system.activation ? `<p><b>Effect:</b> ${skill.system.activation}</p>` : ""}</div>`
         });
@@ -3118,7 +3132,7 @@ class FiresOfWarCharacterSheet extends ActorSheet {
                         if (party && cost > 0) await party.update({ "system.gold": currentPartyGold - cost });
                         await weapon.update({ "system.uses.value": maxUses });
                         ChatMessage.create({
-                            user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+                            author: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }),
                             content: `<div class="feue-repair"><h3>${this.actor.name} repaired ${weapon.name}</h3><p>Uses restored to ${maxUses}/${maxUses}${cost ? ` — ${cost} Gold spent` : ""}.</p></div>`
                         });
                     }
@@ -3287,7 +3301,7 @@ class FiresOfWarCharacterSheet extends ActorSheet {
 
         await completeMajorAction(a, options);
         await ChatMessage.create({
-            user: options.userId ?? game.user.id,
+            author: options.userId ?? game.user.id,
             speaker: ChatMessage.getSpeaker({ actor: a }),
             content: `<div class="feue-item-use"><h3>${a.name} uses ${item.name}</h3><p>${results.join("</p><p>")}</p></div>`
         });
@@ -3339,7 +3353,7 @@ class FiresOfWarCharacterSheet extends ActorSheet {
                         if (amount <= 0) return;
                         await FEUEParty.awardXp([this.actor.id], amount);
                         ChatMessage.create({
-                            user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+                            author: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }),
                             content: `<div class="feue-party-xp"><h3>${this.actor.name}: +${amount} XP</h3></div>`
                         });
                     }
@@ -3412,7 +3426,7 @@ class FiresOfWarItem extends Item {
     }
 }
 
-class FiresOfWarItemSheet extends ItemSheet {
+class FiresOfWarItemSheet extends foundry.appv1.sheets.ItemSheet {
     static _promotionClipboard = null;
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
@@ -4033,7 +4047,7 @@ class FiresOfWarItemSheet extends ItemSheet {
 // ====================================================================
 // 4b. PARTY SHEET
 // ====================================================================
-class FiresOfWarPartySheet extends ActorSheet {
+class FiresOfWarPartySheet extends foundry.appv1.sheets.ActorSheet {
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
             classes: ["feue", "sheet", "actor", "party"],
@@ -4193,7 +4207,7 @@ class FiresOfWarPartySheet extends ActorSheet {
                             }
                             if (log.length) {
                                 ChatMessage.create({
-                                    user: game.user.id, speaker: ChatMessage.getSpeaker({ actor }),
+                                    author: game.user.id, speaker: ChatMessage.getSpeaker({ actor }),
                                     content: `<div class="feue-starting-package"><h3>${actor.name} — Starting Package</h3><p>Received: ${log.join(", ")}.</p></div>`
                                 });
                             }
@@ -4250,7 +4264,7 @@ class FiresOfWarPartySheet extends ActorSheet {
                         if (amount <= 0) return;
                         await FEUEParty.awardXp(members.map(m => m.id), amount);
                         ChatMessage.create({
-                            user: game.user.id,
+                            author: game.user.id,
                             content: `<div class="feue-party-xp"><h3>${this.actor.name}: +${amount} XP</h3><p>Awarded to: ${members.map(m => m.name).join(", ")}</p></div>`
                         });
                     }
@@ -4287,7 +4301,7 @@ class FiresOfWarPartySheet extends ActorSheet {
 // ====================================================================
 // 4c. SHOP SHEET
 // ====================================================================
-class FiresOfWarShopSheet extends ActorSheet {
+class FiresOfWarShopSheet extends foundry.appv1.sheets.ActorSheet {
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
             classes: ["feue", "sheet", "actor", "shop"],
@@ -4750,6 +4764,7 @@ function openTokenActionMenu(subject) {
 // ====================================================================
 Hooks.once("init", () => {
     console.log("FEUE | Initializing system");
+    registerDataModels();
     Handlebars.registerHelper("math", function (l, o, r) { l = parseFloat(l); r = parseFloat(r); return { "+": l + r, "-": l - r, "*": l * r, "/": l / r, "%": l % r }[o]; });
     Handlebars.registerHelper("ifEquals", function (a, b, opts) { return a == b ? opts.fn(this) : opts.inverse(this); });
     Handlebars.registerHelper("join", function (arr, sep) { return Array.isArray(arr) ? arr.join(sep || ", ") : ""; });
@@ -4874,14 +4889,18 @@ Hooks.once("init", () => {
         game.firesOfWar?.tokenIndicators?.refreshAll?.();
     });
 
-    Actors.unregisterSheet("core", ActorSheet);
-    Actors.registerSheet("fires-of-war", FiresOfWarCharacterSheet, { types: ["character"], makeDefault: true });
-    Actors.registerSheet("fires-of-war", FiresOfWarPartySheet, { types: ["party"], makeDefault: true });
-    Actors.registerSheet("fires-of-war", FiresOfWarShopSheet, { types: ["shop"], makeDefault: true });
-    Items.unregisterSheet("core", ItemSheet);
-    Items.registerSheet("fires-of-war", FiresOfWarItemSheet, { makeDefault: true });
+    foundry.applications.apps.DocumentSheetConfig.unregisterSheet(Actor, "core", foundry.appv1.sheets.ActorSheet);
+    foundry.applications.apps.DocumentSheetConfig.registerSheet(Actor, "fires-of-war", FiresOfWarCharacterSheet, { types: ["character"], makeDefault: true });
+    foundry.applications.apps.DocumentSheetConfig.registerSheet(Actor, "fires-of-war", FiresOfWarPartySheet, { types: ["party"], makeDefault: true });
+    foundry.applications.apps.DocumentSheetConfig.registerSheet(Actor, "fires-of-war", FiresOfWarShopSheet, { types: ["shop"], makeDefault: true });
+    foundry.applications.apps.DocumentSheetConfig.unregisterSheet(Item, "core", foundry.appv1.sheets.ItemSheet);
+    foundry.applications.apps.DocumentSheetConfig.registerSheet(Item, "fires-of-war", FiresOfWarItemSheet, { makeDefault: true });
     CONFIG.Actor.documentClass = FiresOfWarActor;
     CONFIG.Item.documentClass = FiresOfWarItem;
+});
+
+Hooks.once("setup", () => {
+    game.settings.settings.get("core.tokenAutoRotate").default = false;
 });
 
 Hooks.once("ready", () => {
